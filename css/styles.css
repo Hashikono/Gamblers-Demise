@@ -49,5 +49,395 @@ h1.game-title {
 /* ════════════════════════════════════════════════════════════
    PHASE 1 — Design Your Casino
 ════════════════════════════════════════════════════════════
+*/
+.phase-label{
 
+    font-size:0.7rem;
+    letter-spacing: 0.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom: 8px;
+
+}
+
+/* ── Bunny Counter ─────────────────────────────────────── */
+.bunny-counter {
+  display: inline-block;
+  border: 1.5px solid var(--border);
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  background: var(--card-bg);
+}
+
+/* ── Casino Floor ──────────────────────────────────────── */
+#casinoFloor {
+  position: relative;
+  border: 2.5px solid var(--border);
+  background: var(--card-bg);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 160px 1fr 160px;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  min-height: 440px;
+}
+
+/* ── Entrance labels ───────────────────────────────────── */
+.entrance-left {
+  position: absolute;
+  left: -56px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.entrance-bottom {
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Door notch on bottom wall */
+.door-notch {
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 6px;
+  background: var(--bg);
+  border-left: 2.5px solid var(--border);
+  border-right: 2.5px solid var(--border);
+}
+
+/* Door notch on left wall */
+.door-notch-left {
+  position: absolute;
+  left: -3px;
+  top: 38%;
+  width: 6px;
+  height: 42px;
+  background: var(--bg);
+  border-top: 2.5px solid var(--border);
+  border-bottom: 2.5px solid var(--border);
+}
+
+/* ── Zone labels ───────────────────────────────────────── */
+.zone-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* ── Top row: spans all 3 columns ─────────────────────── */
+.top-row {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* ── Slot bank in top row ──────────────────────────────── */
+.slot-bank-top {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  border: 1.5px solid var(--border);
+  padding: 10px;
+  background: var(--bg);
+}
+
+/* ── Bar area (top-right) ──────────────────────────────── */
+.bar-area {
+  border: 1.5px solid var(--border);
+  padding: 10px;
+  min-width: 120px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ── Left column slots (zone 2) ────────────────────────── */
+.slot-bank-left {
+  grid-column: 1;
+  grid-row: 2;
+  border: 1.5px solid var(--border);
+  padding: 10px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+}
+
+/* ── Center open area ───────────────────────────────────── */
+.center-area {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8px;
+}
+
+.zone-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--border);
+  opacity: 0.08;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── Right column slots (zone 3) ───────────────────────── */
+.slot-bank-right {
+  grid-column: 3;
+  grid-row: 2;
+  border: 1.5px solid var(--border);
+  padding: 10px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+}
+
+/* ════════════════════════════════════════════════════════
+   Slot Machine Component
+════════════════════════════════════════════════════════ */
+.slotMachine {
+  position: relative;
+  width: 64px;
+  flex-shrink: 0;
+}
+
+.slotMachine.horizontal {
+  width: 72px;
+}
+
+.slotVisual {
+  width: 100%;
+  aspect-ratio: 1 / 1.25;
+  background: var(--slot-bg);
+  border: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 6px 4px;
+  gap: 3px;
+}
+
+.slotVisual::before,
+.slotVisual::after { display: none; }
+
+.reel-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 80%;
+}
+
+.reel {
+  width: 100%;
+  height: 14px;
+  background: var(--bg);
+  border: 1px solid var(--muted);
+}
+
+.slotHitbox {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.slotMachine:hover .slotVisual {
+  border-color: var(--accent);
+  outline: 1.5px dashed var(--accent);
+}
+
+/* ════════════════════════════════════════════════════════
+   Machine Settings Menu (Modal)
+════════════════════════════════════════════════════════ */
+#machineMenu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  border: 2.5px solid var(--border);
+  padding: 24px;
+  width: 300px;
+  z-index: 100;
+  box-shadow: 6px 6px 0 var(--border);
+}
+
+#machineMenu h3 {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.menu-field {
+  margin-bottom: 16px;
+}
+
+.menu-field label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.menu-field input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.menu-field .range-val {
+  font-size: 0.75rem;
+  text-align: right;
+  display: block;
+  color: var(--border);
+}
+
+#menuClose {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--border);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#menuClose:hover {
+  background: var(--accent);
+}
+
+/* ════════════════════════════════════════════════════════
+   PHASE 2 — Victim Mode
+════════════════════════════════════════════════════════ */
+#phase2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+  border: 2.5px solid var(--border);
+  background: var(--card-bg);
+  padding: 40px 24px;
+  gap: 20px;
+  text-align: center;
+}
+
+#phase2 .hud {
+  display: flex;
+  gap: 40px;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+}
+
+#phase2 .hud span {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+#playBtn {
+  padding: 12px 48px;
+  background: var(--border);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#playBtn:hover {
+  background: var(--accent);
+}
+
+#lastResult {
+  min-height: 24px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+/* ════════════════════════════════════════════════════════
+   PHASE 3 — End Screen
+════════════════════════════════════════════════════════ */
+#phase3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+  border: 2.5px solid var(--border);
+  background: var(--card-bg);
+  padding: 40px 24px;
+  gap: 16px;
+  text-align: center;
+}
+
+#phase3 h2 {
+  font-size: 1.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+#phase3 .survive-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#surviveTime {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+  margin-top: 4px;
+}
+
+#endMessage {
+  font-size: 0.9rem;
+  max-width: 480px;
+  line-height: 1.7;
+  color: var(--muted);
+}
 
