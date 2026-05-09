@@ -1,13 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Gamblers Demise :></title>
-        <link rel="stylesheet" type="text/css" href="css/styles.css">
-        <script type="text/javascript" src="js/main.js"></script>
-    </head>
-    <body>
-        <p>hello...</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gamblers Demise</title>
+  <link rel="stylesheet" href="gamblers-demise.css" />
+</head>
+<body>
+<h1 class="game-title">Gamblers Demise</h1>
+
+<!------------------------------------------------------
+PHASE 1: DESIGN UR CASINO!
+
+---------------------------------------------------------->
+<div id="phase1" class="phase">
+ 
+    <div class="phase-label">Phase 1 — Design Your Casino</div>
+ 
+    <div class="bunny-counter">Bunny Count: <span id="bunnyCount">0</span> / 15</div>
+ 
+    <div id="casinoFloor">
+ 
+      <!-- Entrance markers -->
+      <span class="entrance-left">Enter</span>
+      <div class="door-notch-left"></div>
+      <div class="door-notch"></div>
+      <span class="entrance-bottom">Enter</span>
+ 
+      <!-- ── TOP ROW: slot bank + bar ────────────────────── -->
+      <div class="top-row">
+ 
+        <!-- Zone 1: top slot bank -->
+        <div class="slot-bank-top">
+          <div class="zone-label" style="align-self:center; writing-mode:vertical-lr; margin-right:6px;">1</div>
+ 
+          <!-- Slot A -->
+          <div class="slotMachine horizontal">
+            <div class="slotVisual">
+              <div class="reel-row">
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+              </div>
+            </div>
+            <button class="slotHitbox" aria-label="Configure slot machine A"></button>
+          </div>
+ 
+          <!-- Slot B -->
+          <div class="slotMachine horizontal">
+            <div class="slotVisual">
+              <div class="reel-row">
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+              </div>
+            </div>
+            <button class="slotHitbox" aria-label="Configure slot machine B"></button>
+          </div>
+ 
+          <!-- Slot C -->
+          <div class="slotMachine horizontal">
+            <div class="slotVisual">
+              <div class="reel-row">
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+              </div>
+            </div>
+            <button class="slotHitbox" aria-label="Configure slot machine C"></button>
+          </div>
+ 
+        </div><!-- /slot-bank-top -->
+ 
+        <!-- Bar area -->
+        <div class="bar-area">Bar</div>
+ 
+      </div><!-- /top-row -->
+
+
+
+
+
+
+
+
+
     </body>
 </html>
