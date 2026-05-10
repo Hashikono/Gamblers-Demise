@@ -8,10 +8,11 @@
 :root {
   --bg:        #f5f0e8;
   --border:    #1a1a2e;
-  --accent:    #c0392b;
+  --accent:    #c9a961;
   --muted:     #7f8c8d;
   --card-bg:   #ede8dc;
-  --slot-bg:   #d6cfc0;
+  --slot-bg:   #2a1620;
+  --slot-edge: #c9a961;
   --font-mono: 'Courier New', Courier, monospace;
 }
 
@@ -35,8 +36,6 @@ h1.game-title {
   margin-bottom: 20px;
 }
 
-
-
 /* ─── Utility ───────────────────────────────────────────────── */
 .hidden { display: none; }
 
@@ -48,16 +47,13 @@ h1.game-title {
 
 /* ════════════════════════════════════════════════════════════
    PHASE 1 — Design Your Casino
-════════════════════════════════════════════════════════════
-*/
-.phase-label{
-
-    font-size:0.7rem;
-    letter-spacing: 0.2em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom: 8px;
-
+════════════════════════════════════════════════════════════ */
+.phase-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
 }
 
 /* ── Bunny Counter ─────────────────────────────────────── */
@@ -73,27 +69,27 @@ h1.game-title {
 /* ── Casino Floor ──────────────────────────────────────── */
 #casinoFloor {
   position: relative;
-  border: 2.5px solid var(--border);
-  background: var(--card-bg);
+  border: 3px solid var(--border);
+  background-image: url('../assets/casino-floor-2.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   padding: 16px;
   display: grid;
   grid-template-columns: 160px 1fr 160px;
   grid-template-rows: auto 1fr;
   gap: 12px;
-  min-height: 440px;
+  min-height: 540px;
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.4);
 }
 
-/* ── Entrance labels ───────────────────────────────────── */
+/* ── Entrance labels (bottom only — left removed) ──────── */
 .entrance-left {
-  position: absolute;
-  left: -56px;
-  top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
-  font-size: 0.65rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  white-space: nowrap;
+  display: none;        /* ← LEFT ENTRANCE CLOSED */
+}
+
+.door-notch-left {
+  display: none;        /* ← LEFT DOOR NOTCH CLOSED */
 }
 
 .entrance-bottom {
@@ -101,47 +97,38 @@ h1.game-title {
   bottom: -26px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.65rem;
-  letter-spacing: 0.18em;
+  font-size: 0.8rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--accent);
+  font-weight: bold;
 }
 
-/* Door notch on bottom wall */
+/* WIDER bottom door notch */
 .door-notch {
   position: absolute;
   bottom: -3px;
   left: 50%;
   transform: translateX(-50%);
-  width: 72px;
+  width: 160px;
   height: 6px;
   background: var(--bg);
-  border-left: 2.5px solid var(--border);
-  border-right: 2.5px solid var(--border);
-}
-
-/* Door notch on left wall */
-.door-notch-left {
-  position: absolute;
-  left: -3px;
-  top: 38%;
-  width: 6px;
-  height: 42px;
-  background: var(--bg);
-  border-top: 2.5px solid var(--border);
-  border-bottom: 2.5px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-right: 3px solid var(--border);
 }
 
 /* ── Zone labels ───────────────────────────────────────── */
 .zone-label {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: var(--muted);
+  color: var(--accent);
   text-transform: uppercase;
   margin-bottom: 4px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
-/* ── Top row: spans all 3 columns ─────────────────────── */
+/* ── Top row ──────────────────────────────────────────── */
 .top-row {
   grid-column: 1 / -1;
   display: flex;
@@ -149,45 +136,70 @@ h1.game-title {
   align-items: flex-start;
 }
 
-/* ── Slot bank in top row ──────────────────────────────── */
+/* Zone bank containers */
+.slot-bank-top,
+.slot-bank-left,
+.slot-bank-right {
+  position: relative;          /* needed for absolute unlock button */
+  border: 1.5px solid rgba(201, 169, 97, 0.5);
+  padding: 10px;
+  background: rgba(20, 8, 14, 0.35);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Row 1 slots — CENTERED */
 .slot-bank-top {
   display: flex;
-  gap: 8px;
+  gap: 18px;
   flex: 1;
-  border: 1.5px solid var(--border);
-  padding: 10px;
-  background: var(--bg);
-}
-
-/* ── Bar area (top-right) ──────────────────────────────── */
-.bar-area {
-  border: 1.5px solid var(--border);
-  padding: 10px;
-  min-width: 120px;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  text-transform: uppercase;
+  align-items: center;
 }
 
-/* ── Left column slots (zone 2) ────────────────────────── */
+/* The "1" zone label sits inline; let the slots center independently */
+.slot-bank-top > .zone-label {
+  position: absolute;
+}
+
 .slot-bank-left {
   grid-column: 1;
   grid-row: 2;
-  border: 1.5px solid var(--border);
-  padding: 10px;
-  background: var(--bg);
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-self: start;
 }
 
-/* ── Center open area ───────────────────────────────────── */
+.slot-bank-right {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+}
+
+/* ── Bar area ─────────────────────────────────────────── */
+.bar-area {
+  border: 1.5px solid rgba(201, 169, 97, 0.5);
+  padding: 10px;
+  min-width: 120px;
+  background: rgba(15, 26, 61, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* ── Center open floor area ───────────────────────────── */
 .center-area {
   grid-column: 2;
   grid-row: 2;
@@ -198,25 +210,141 @@ h1.game-title {
 }
 
 .zone-number {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--border);
-  opacity: 0.08;
-  line-height: 1;
-  user-select: none;
+  display: none;
 }
 
-/* ── Right column slots (zone 3) ───────────────────────── */
-.slot-bank-right {
-  grid-column: 3;
-  grid-row: 2;
-  border: 1.5px solid var(--border);
-  padding: 10px;
-  background: var(--bg);
+/* ════════════════════════════════════════════════════════
+   LOCKED ZONE OVERLAY
+   Add `.locked` class to .slot-bank-left / .slot-bank-right
+   to gray it out and show the unlock button.
+════════════════════════════════════════════════════════ */
+.slot-bank-left.locked,
+.slot-bank-right.locked {
+  background: rgba(20, 20, 25, 0.65);
+  border-color: rgba(120, 120, 130, 0.5);
+}
+
+/* Desaturate the slot machines inside locked zones */
+.slot-bank-left.locked .slotMachine,
+.slot-bank-right.locked .slotMachine {
+  filter: grayscale(100%) brightness(0.5);
+  pointer-events: none;
+  transition: filter 0.3s ease;
+}
+
+/* Dim the zone label number when locked */
+.slot-bank-left.locked > .zone-label,
+.slot-bank-right.locked > .zone-label {
+  opacity: 0.4;
+}
+
+/* The unlock button — hidden by default */
+.zone-unlock-btn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  font-family: var(--font-mono);
+  color: #ffd97a;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 0;
+}
+
+/* Show unlock button only when zone is locked */
+.locked .zone-unlock-btn {
+  display: flex;
+}
+
+/* The button's inner pill — what actually animates */
+.zone-unlock-btn .pill {
+  background: rgba(20, 8, 14, 0.9);
+  border: 1.5px solid var(--accent);
+  padding: 10px 18px;
+  border-radius: 4px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  box-shadow: 0 0 0 0 rgba(201, 169, 97, 0.5);
+  transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  align-self: start;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.85;
+  animation: idleBreathe 2.4s ease-in-out infinite;
+}
+
+.zone-unlock-btn .pill .price {
+  font-size: 1rem;
+  color: #ffd97a;
+  letter-spacing: 0.1em;
+}
+
+.zone-unlock-btn .pill .label {
+  font-size: 0.55rem;
+  color: rgba(255, 217, 122, 0.75);
+  letter-spacing: 0.18em;
+}
+
+/* Hover: gold glow pulse + scale up */
+.zone-unlock-btn:hover .pill {
+  border-color: #ffd97a;
+  background: rgba(60, 30, 20, 0.95);
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(255, 217, 122, 0.6),
+              inset 0 0 10px rgba(255, 217, 122, 0.2);
+  opacity: 1;
+  animation: pulseGold 1.2s ease-in-out infinite;
+}
+
+.zone-unlock-btn:active .pill {
+  transform: scale(0.96);
+}
+
+@keyframes pulseGold {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(255, 217, 122, 0.55),
+                inset 0 0 10px rgba(255, 217, 122, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(255, 217, 122, 0.85),
+                inset 0 0 14px rgba(255, 217, 122, 0.35);
+  }
+}
+
+@keyframes idleBreathe {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+
+/* Zone 3 stays disabled until Zone 2 unlocks.
+   Add `.zone3-disabled` to .slot-bank-right alongside `.locked`. */
+.slot-bank-right.zone3-disabled .zone-unlock-btn {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.slot-bank-right.zone3-disabled .zone-unlock-btn:hover .pill {
+  transform: none;
+  border-color: var(--accent);
+  animation: none;
+  box-shadow: none;
+}
+
+.slot-bank-right.zone3-disabled .zone-unlock-btn .pill .label::after {
+  content: " (unlock 2 first)";
+  display: block;
+  font-size: 0.45rem;
+  color: rgba(255, 217, 122, 0.5);
+  margin-top: 2px;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -235,14 +363,15 @@ h1.game-title {
 .slotVisual {
   width: 100%;
   aspect-ratio: 1 / 1.25;
-  background: var(--slot-bg);
-  border: 1.5px solid var(--border);
+  background: linear-gradient(180deg, #3d1828 0%, #1a0a14 100%);
+  border: 1.5px solid var(--slot-edge);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
   padding: 6px 4px;
   gap: 3px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
 .slotVisual::before,
@@ -258,8 +387,8 @@ h1.game-title {
 .reel {
   width: 100%;
   height: 14px;
-  background: var(--bg);
-  border: 1px solid var(--muted);
+  background: #ede8dc;
+  border: 1px solid #6b1f2a;
 }
 
 .slotHitbox {
@@ -274,8 +403,9 @@ h1.game-title {
 }
 
 .slotMachine:hover .slotVisual {
-  border-color: var(--accent);
-  outline: 1.5px dashed var(--accent);
+  border-color: #ffd97a;
+  outline: 1.5px dashed #ffd97a;
+  box-shadow: 0 0 12px rgba(255, 217, 122, 0.5);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -318,7 +448,7 @@ h1.game-title {
 
 .menu-field input[type="range"] {
   width: 100%;
-  accent-color: var(--accent);
+  accent-color: #c0392b;
 }
 
 .menu-field .range-val {
@@ -344,7 +474,7 @@ h1.game-title {
 }
 
 #menuClose:hover {
-  background: var(--accent);
+  background: #c0392b;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -388,13 +518,13 @@ h1.game-title {
 }
 
 #playBtn:hover {
-  background: var(--accent);
+  background: #c0392b;
 }
 
 #lastResult {
   min-height: 24px;
   font-size: 0.85rem;
-  color: var(--accent);
+  color: #c0392b;
   letter-spacing: 0.08em;
 }
 
@@ -440,4 +570,3 @@ h1.game-title {
   line-height: 1.7;
   color: var(--muted);
 }
-

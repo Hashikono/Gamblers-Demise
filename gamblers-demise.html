@@ -75,8 +75,8 @@
 
     </div><!-- /top-row -->
 
-    <!-- ── LEFT COLUMN: Zone 2 ─────────────────────────── -->
-    <div class="slot-bank-left">
+    <!-- ── LEFT COLUMN: Zone 2 (LOCKED — unlocks first) ──── -->
+    <div class="slot-bank-left locked" id="zone2">
       <div class="zone-label">2</div>
 
       <!-- Slot D -->
@@ -115,6 +115,14 @@
         <button class="slotHitbox" aria-label="Configure slot machine F"></button>
       </div>
 
+      <!-- Unlock button for Zone 2 -->
+      <button class="zone-unlock-btn" data-zone="2" data-cost="2000" aria-label="Unlock Zone 2 for 2k">
+        <span class="pill">
+          <span class="price">$2K</span>
+          <span class="label">Unlock Zone 2</span>
+        </span>
+      </button>
+
     </div><!-- /slot-bank-left -->
 
     <!-- ── CENTER: open floor watermark ───────────────── -->
@@ -122,8 +130,8 @@
       <div class="zone-number">3</div>
     </div>
 
-    <!-- ── RIGHT COLUMN: Zone 3 ───────────────────────── -->
-    <div class="slot-bank-right">
+    <!-- ── RIGHT COLUMN: Zone 3 (LOCKED + DISABLED until 2 unlocks) -->
+    <div class="slot-bank-right locked zone3-disabled" id="zone3">
       <div class="zone-label" style="text-align:right;">3</div>
 
       <!-- Slot G -->
@@ -161,6 +169,14 @@
         </div>
         <button class="slotHitbox" aria-label="Configure slot machine I"></button>
       </div>
+
+      <!-- Unlock button for Zone 3 -->
+      <button class="zone-unlock-btn" data-zone="3" data-cost="2000" aria-label="Unlock Zone 3 for 2k">
+        <span class="pill">
+          <span class="price">$2K</span>
+          <span class="label">Unlock Zone 3</span>
+        </span>
+      </button>
 
     </div><!-- /slot-bank-right -->
 
