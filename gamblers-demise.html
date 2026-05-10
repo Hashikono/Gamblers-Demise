@@ -82,7 +82,16 @@
 ═══════════════════════════════════════════════════════ -->
 <div id="phase1" class="hidden">
   <div class="phase-label">Phase 1 — Design Your Casino</div>
-  <div class="bunny-counter">Bunny Count: <span id="bunnyCount">0</span> / 15</div>
+
+  <!-- HUD row: bunny counter + money -->
+  <div class="phase1-hud">
+    <div class="bunny-counter">
+      Bunnies: <span id="bunnyCount">0</span> / <span id="bunnyMax">0</span>
+    </div>
+    <div class="money-counter">
+      Money: $<span id="playerMoneyDisplay">1000</span>
+    </div>
+  </div>
 
   <div id="casinoFloor">
     <span class="entrance-left">Enter</span>
@@ -94,17 +103,17 @@
       <div class="slot-bank-top">
         <div class="zone-label" style="align-self:center; writing-mode:vertical-lr; margin-right:6px;">1</div>
 
-        <div class="slotMachine horizontal">
+        <div class="slotMachine horizontal" data-slot="1">
           <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
           <button class="slotHitbox" id="slot1"></button>
         </div>
 
-        <div class="slotMachine horizontal">
+        <div class="slotMachine horizontal" data-slot="2">
           <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
           <button class="slotHitbox" id="slot2"></button>
         </div>
 
-        <div class="slotMachine horizontal">
+        <div class="slotMachine horizontal" data-slot="3">
           <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
           <button class="slotHitbox" id="slot3"></button>
         </div>
@@ -115,17 +124,17 @@
     <div class="slot-bank-left locked" id="zone2">
       <div class="zone-label">2</div>
 
-      <div class="slotMachine">
+      <div class="slotMachine" data-slot="4">
         <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
         <button class="slotHitbox" id="slot4"></button>
       </div>
 
-      <div class="slotMachine">
+      <div class="slotMachine" data-slot="5">
         <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
         <button class="slotHitbox" id="slot5"></button>
       </div>
 
-      <div class="slotMachine">
+      <div class="slotMachine" data-slot="6">
         <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
         <button class="slotHitbox" id="slot6"></button>
       </div>
@@ -145,17 +154,17 @@
     <div class="slot-bank-right locked zone3-disabled" id="zone3">
       <div class="zone-label" style="text-align:right;">3</div>
 
-      <div class="slotMachine">
+      <div class="slotMachine" data-slot="7">
         <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
         <button class="slotHitbox" id="slot7"></button>
       </div>
 
-      <div class="slotMachine">
+      <div class="slotMachine" data-slot="8">
         <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
         <button class="slotHitbox" id="slot8"></button>
       </div>
 
-      <div class="slotMachine">
+      <div class="slotMachine" data-slot="9">
         <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
         <button class="slotHitbox" id="slot9"></button>
       </div>
@@ -167,18 +176,16 @@
         </span>
       </button>
     </div>
+
+    <!-- Bunnies will be appended here by JS -->
+    <div id="bunnyLayer"></div>
   </div><!-- /#casinoFloor -->
 
   <button id="startDayBtn" class="start-day-btn">Start Day</button>
 </div><!-- /#phase1 -->
 
 
-<!-- ══════════════════════════════════════════════════════
-     SLOT MACHINE SETTINGS POPUP (NEW — clean version)
-     Opens when any slotHitbox is clicked.
-     JS reads currentSlot, populates fields from
-     machineList[currentSlot-1], saves on submit.
-═══════════════════════════════════════════════════════ -->
+<!-- SLOT MACHINE SETTINGS POPUP -->
 <div id="machinePopup" class="hidden">
   <div class="machine-popup-inner">
     <h3>Slot <span id="machineTargetLabel">1</span> Settings</h3>
@@ -205,9 +212,7 @@
     </div>
 
     <div class="machine-field">
-      <label for="parameter_override">
-        Override Win Rate: <span id="overrideVal">Off</span>
-      </label>
+      <label for="parameter_override">Override Win Rate: <span id="overrideVal">Off</span></label>
       <input type="range" id="parameter_override" min="0" max="1" step="1" value="0">
     </div>
 

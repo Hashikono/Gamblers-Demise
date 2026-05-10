@@ -905,3 +905,68 @@ h1.game-title {
 #machine_submit_btn {
   margin-top: 8px;
 }
+
+/* ════════════════════════════════════════════════════════
+   APPEND TO css/styles.css
+   Day-runner additions: HUD row, bunny layer, bunny anim
+════════════════════════════════════════════════════════ */
+
+/* HUD row above the casino floor */
+.phase1-hud {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.money-counter {
+  display: inline-block;
+  border: 1.5px solid var(--border);
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  background: var(--card-bg);
+  font-weight: bold;
+}
+
+.money-counter span {
+  color: #2d8a4f;
+}
+
+/* Bunny layer — covers casino floor, bunnies positioned absolutely inside */
+#bunnyLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Bunny element — JS sets left/top, CSS animates the movement */
+.bunny {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+              top 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 11;
+}
+
+/* Idle hop animation, applied via .walking class */
+@keyframes bunnyHop {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+.bunny.walking {
+  animation: bunnyHop 0.45s ease-in-out infinite;
+}
+
+/* Start Day button disabled state styling */
+.start-day-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
