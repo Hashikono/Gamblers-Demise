@@ -1,234 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gamblers Demise</title>
-  <link rel="stylesheet" href="css/styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gamblers Demise</title>
+<link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-
 <h1 class="game-title">Gamblers Demise</h1>
 
 <!-- ══════════════════════════════════════════════════════
      PHASE 1: DESIGN YOUR CASINO
 ═══════════════════════════════════════════════════════ -->
 <div id="phase1" class="phase">
+<div class="phase-label">Phase 1 — Design Your Casino</div>
+<div class="bunny-counter">Bunny Count: <span id="bunnyCount">0</span> / 15</div>
+<div id="casinoFloor">
 
-  <div class="phase-label">Phase 1 — Design Your Casino</div>
+<!-- Entrance markers -->
+<span class="entrance-left">Enter</span>
+<div class="door-notch-left"></div>
+<div class="door-notch"></div>
+<span class="entrance-bottom">Enter</span>
 
-  <div class="bunny-counter">Bunny Count: <span id="bunnyCount">0</span> / 15</div>
+<!-- ── TOP ROW: Zone 1 slot bank + Bar ─────────────── -->
+<div class="top-row">
+<div class="slot-bank-top">
+<div class="zone-label" style="align-self:center; writing-mode:vertical-lr; margin-right:6px;">1</div>
 
-  <div id="casinoFloor">
+<!-- Slot 1 -->
+<div class="slotMachine horizontal">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot1"></button>
+</div>
 
-    <!-- Entrance markers -->
-    <span class="entrance-left">Enter</span>
-    <div class="door-notch-left"></div>
-    <div class="door-notch"></div>
-    <span class="entrance-bottom">Enter</span>
+<!-- Slot 2 -->
+<div class="slotMachine horizontal">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot2"></button>
+</div>
 
-    <!-- ── TOP ROW: Zone 1 slot bank + Bar ─────────────── -->
-    <div class="top-row">
+<!-- Slot 3 -->
+<div class="slotMachine horizontal">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot3"></button>
+</div>
 
-      <div class="slot-bank-top">
-        <div class="zone-label" style="align-self:center; writing-mode:vertical-lr; margin-right:6px;">1</div>
+</div><!-- /slot-bank-top -->
+<div class="bar-area">Bar</div>
+</div><!-- /top-row -->
 
-        <!-- Slot A -->
-        <div class="slotMachine horizontal">
-          <div class="slotVisual">
-            <div class="reel-row">
-              <div class="reel"></div>
-              <div class="reel"></div>
-              <div class="reel"></div>
-            </div>
-          </div>
-          <button class="slotHitbox" aria-label="Configure slot machine A"></button>
-        </div>
+<!-- ── LEFT COLUMN: Zone 2 ──────────────────────────── -->
+<div class="slot-bank-left locked" id="zone2">
+<div class="zone-label">2</div>
 
-        <!-- Slot B -->
-        <div class="slotMachine horizontal">
-          <div class="slotVisual">
-            <div class="reel-row">
-              <div class="reel"></div>
-              <div class="reel"></div>
-              <div class="reel"></div>
-            </div>
-          </div>
-          <button class="slotHitbox" aria-label="Configure slot machine B"></button>
-        </div>
+<!-- Slot 4 -->
+<div class="slotMachine">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot4"></button>
+</div>
 
-        <!-- Slot C -->
-        <div class="slotMachine horizontal">
-          <div class="slotVisual">
-            <div class="reel-row">
-              <div class="reel"></div>
-              <div class="reel"></div>
-              <div class="reel"></div>
-            </div>
-          </div>
-          <button class="slotHitbox" aria-label="Configure slot machine C"></button>
-        </div>
+<!-- Slot 5 -->
+<div class="slotMachine">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot5"></button>
+</div>
 
-      </div><!-- /slot-bank-top -->
+<!-- Slot 6 -->
+<div class="slotMachine">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot6"></button>
+</div>
 
-      <div class="bar-area">Bar</div>
+<!-- Unlock button for Zone 2 -->
+<button class="zone-unlock-btn" data-zone="2" data-cost="2000">
+<span class="pill">
+<span class="price">$2K</span>
+<span class="label">Unlock Zone 2</span>
+</span>
+</button>
+</div><!-- /slot-bank-left -->
 
-    </div><!-- /top-row -->
+<!-- ── CENTER: open floor watermark ───────────────── -->
+<div class="center-area">
+<div class="zone-number">3</div>
+</div>
 
-    <!-- ── LEFT COLUMN: Zone 2 (LOCKED — unlocks first) ──── -->
-    <div class="slot-bank-left locked" id="zone2">
-      <div class="zone-label">2</div>
+<!-- ── RIGHT COLUMN: Zone 3 ──────────────────────── -->
+<div class="slot-bank-right locked zone3-disabled" id="zone3">
+<div class="zone-label" style="text-align:right;">3</div>
 
-      <!-- Slot D -->
-      <div class="slotMachine">
-        <div class="slotVisual">
-          <div class="reel-row">
-            <div class="reel"></div>
-            <div class="reel"></div>
-            <div class="reel"></div>
-          </div>
-        </div>
-        <button class="slotHitbox" aria-label="Configure slot machine D"></button>
-      </div>
+<!-- Slot 7 -->
+<div class="slotMachine">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot7"></button>
+</div>
 
-      <!-- Slot E -->
-      <div class="slotMachine">
-        <div class="slotVisual">
-          <div class="reel-row">
-            <div class="reel"></div>
-            <div class="reel"></div>
-            <div class="reel"></div>
-          </div>
-        </div>
-        <button class="slotHitbox" aria-label="Configure slot machine E"></button>
-      </div>
+<!-- Slot 8 -->
+<div class="slotMachine">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot8"></button>
+</div>
 
-      <!-- Slot F -->
-      <div class="slotMachine">
-        <div class="slotVisual">
-          <div class="reel-row">
-            <div class="reel"></div>
-            <div class="reel"></div>
-            <div class="reel"></div>
-          </div>
-        </div>
-        <button class="slotHitbox" aria-label="Configure slot machine F"></button>
-      </div>
+<!-- Slot 9 -->
+<div class="slotMachine">
+<div class="slotVisual">
+<div class="reel-row">
+<div class="reel"></div>
+<div class="reel"></div>
+<div class="reel"></div>
+</div>
+</div>
+<button class="slotHitbox" id="slot9"></button>
+</div>
 
-      <!-- Unlock button for Zone 2 -->
-      <button class="zone-unlock-btn" data-zone="2" data-cost="2000" aria-label="Unlock Zone 2 for 2k">
-        <span class="pill">
-          <span class="price">$2K</span>
-          <span class="label">Unlock Zone 2</span>
-        </span>
-      </button>
+<!-- Unlock button for Zone 3 -->
+<button class="zone-unlock-btn" data-zone="3" data-cost="2000">
+<span class="pill">
+<span class="price">$2K</span>
+<span class="label">Unlock Zone 3</span>
+</span>
+</button>
+</div><!-- /slot-bank-right -->
 
-    </div><!-- /slot-bank-left -->
-
-    <!-- ── CENTER: open floor watermark ───────────────── -->
-    <div class="center-area">
-      <div class="zone-number">3</div>
-    </div>
-
-    <!-- ── RIGHT COLUMN: Zone 3 (LOCKED + DISABLED until 2 unlocks) -->
-    <div class="slot-bank-right locked zone3-disabled" id="zone3">
-      <div class="zone-label" style="text-align:right;">3</div>
-
-      <!-- Slot G -->
-      <div class="slotMachine">
-        <div class="slotVisual">
-          <div class="reel-row">
-            <div class="reel"></div>
-            <div class="reel"></div>
-            <div class="reel"></div>
-          </div>
-        </div>
-        <button class="slotHitbox" aria-label="Configure slot machine G"></button>
-      </div>
-
-      <!-- Slot H -->
-      <div class="slotMachine">
-        <div class="slotVisual">
-          <div class="reel-row">
-            <div class="reel"></div>
-            <div class="reel"></div>
-            <div class="reel"></div>
-          </div>
-        </div>
-        <button class="slotHitbox" aria-label="Configure slot machine H"></button>
-      </div>
-
-      <!-- Slot I -->
-      <div class="slotMachine">
-        <div class="slotVisual">
-          <div class="reel-row">
-            <div class="reel"></div>
-            <div class="reel"></div>
-            <div class="reel"></div>
-          </div>
-        </div>
-        <button class="slotHitbox" aria-label="Configure slot machine I"></button>
-      </div>
-
-      <!-- Unlock button for Zone 3 -->
-      <button class="zone-unlock-btn" data-zone="3" data-cost="2000" aria-label="Unlock Zone 3 for 2k">
-        <span class="pill">
-          <span class="price">$2K</span>
-          <span class="label">Unlock Zone 3</span>
-        </span>
-      </button>
-
-    </div><!-- /slot-bank-right -->
-
-  </div><!-- /#casinoFloor -->
-
+</div><!-- /#casinoFloor -->
 </div><!-- /#phase1 -->
 
 
 <!-- ══════════════════════════════════════════════════════
-     MACHINE SETTINGS MENU (hidden by default)
+     MACHINE SETTINGS MENU — hidden pop-up panel for slot
+     machines. Triggered by JS when any #slot1..#slot9 is
+     clicked. JS should set #machineMenu's data-target attr
+     to the clicked slot's id, then remove .hidden.
 ═══════════════════════════════════════════════════════ -->
-<div id="machineMenu" class="hidden">
-  <h3>Machine Settings</h3>
+<div id="machineMenu" class="hidden" data-target="">
+<h3>Machine Settings</h3>
 
-  <div class="menu-field">
-    <label for="sliderWinRate">Win Rate</label>
-    <input type="range" id="sliderWinRate" min="0" max="100" value="20" />
-    <span class="range-val" id="valWinRate">20%</span>
-  </div>
+<div class="menu-target">Editing: <span id="menuTargetLabel">—</span></div>
 
-  <div class="menu-field">
-    <label for="sliderPayout">Payout Multiplier</label>
-    <input type="range" id="sliderPayout" min="1" max="20" value="5" />
-    <span class="range-val" id="valPayout">5×</span>
-  </div>
-
-  <div class="menu-field">
-    <label for="sliderStartMoney">Starting Player Money</label>
-    <input type="range" id="sliderStartMoney" min="100" max="5000" step="100" value="1000" />
-    <span class="range-val" id="valStartMoney">$1000</span>
-  </div>
-
-  <button id="menuClose">Close</button>
+<div class="menu-field">
+<label for="sliderWinRate">Win Rate</label>
+<input type="range" id="sliderWinRate" min="0" max="100" value="20" />
+<span class="range-val" id="valWinRate">20%</span>
 </div>
+
+<div class="menu-field">
+<label for="sliderPayout">Payout Multiplier</label>
+<input type="range" id="sliderPayout" min="1" max="20" value="5" />
+<span class="range-val" id="valPayout">5×</span>
+</div>
+
+<div class="menu-field">
+<label for="sliderStartMoney">Starting Player Money</label>
+<input type="range" id="sliderStartMoney" min="100" max="5000" step="100" value="1000" />
+<span class="range-val" id="valStartMoney">$1000</span>
+</div>
+
+<button id="menuClose">Close</button>
+</div>
+
+<!-- Backdrop for the settings modal -->
+<div id="menuBackdrop" class="hidden"></div>
 
 
 <!-- ══════════════════════════════════════════════════════
      PHASE 2: VICTIM MODE
 ═══════════════════════════════════════════════════════ -->
 <div id="phase2" class="phase hidden">
-
-  <div class="phase-label">Phase 2 — Victim Mode</div>
-
-  <div class="hud">
-    <div>Money: $<span id="money">1000</span></div>
-    <div><span id="timer">05:00</span></div>
-  </div>
-
-  <button id="playBtn">PLAY</button>
-
-  <div id="lastResult"></div>
-
+<div class="phase-label">Phase 2 — Victim Mode</div>
+<div class="hud">
+<div>Money: $<span id="money">1000</span></div>
+<div><span id="timer">05:00</span></div>
+</div>
+<button id="playBtn">PLAY</button>
+<div id="lastResult"></div>
 </div><!-- /#phase2 -->
 
 
@@ -236,18 +229,13 @@
      PHASE 3: END SCREEN
 ═══════════════════════════════════════════════════════ -->
 <div id="phase3" class="phase hidden">
-
-  <div class="phase-label">Phase 3 — End Screen</div>
-
-  <h2>Game Over</h2>
-
-  <div>
-    <div class="survive-label">Time Survived</div>
-    <span id="surviveTime"></span>
-  </div>
-
-  <p id="endMessage"></p>
-
+<div class="phase-label">Phase 3 — End Screen</div>
+<h2>Game Over</h2>
+<div>
+<div class="survive-label">Time Survived</div>
+<span id="surviveTime"></span>
+</div>
+<p id="endMessage"></p>
 </div><!-- /#phase3 -->
 
 </body>

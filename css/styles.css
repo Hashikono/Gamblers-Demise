@@ -570,3 +570,27 @@ h1.game-title {
   line-height: 1.7;
   color: var(--muted);
 }
+
+
+
+/* Dim backdrop behind the settings modal */
+#menuBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 90;            /* below #machineMenu (z-index: 100) */
+}
+
+/* Small "Editing: slot1" header inside the modal */
+.menu-target {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.menu-target #menuTargetLabel {
+  color: var(--border);
+  font-weight: bold;
+}
