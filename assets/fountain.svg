@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+
+  <!-- Outer circle: stone rim -->
+  <circle cx="70" cy="70" r="62" fill="#6b6258" stroke="#c9a961" stroke-width="2"/>
+
+  <!-- Inner circle: water -->
+  <circle cx="70" cy="70" r="50" fill="#3a6a8a" stroke="#5a8aac" stroke-width="1.5"/>
+
+  <!-- Center circle: fountain head -->
+  <circle cx="70" cy="70" r="10" fill="#8a8278" stroke="#c9a961" stroke-width="1.5"/>
+
+  <!-- 4 tiny droplets around center (N, E, S, W) -->
+  <circle cx="70" cy="46" r="3" fill="#a8d0e8" stroke="#5a8aac" stroke-width="0.5"/>
+  <circle cx="94" cy="70" r="3" fill="#a8d0e8" stroke="#5a8aac" stroke-width="0.5"/>
+  <circle cx="70" cy="94" r="3" fill="#a8d0e8" stroke="#5a8aac" stroke-width="0.5"/>
+  <circle cx="46" cy="70" r="3" fill="#a8d0e8" stroke="#5a8aac" stroke-width="0.5"/>
+
+</svg>

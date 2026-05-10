@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 100" width="180" height="100">
+
+  <!-- Back shelf hint: thin rectangle on the back edge -->
+  <rect x="14" y="10" width="152" height="10" rx="2" ry="2"
+        fill="#1a0a14" stroke="#c9a961" stroke-width="1"/>
+
+  <!-- Bar counter: long rounded rectangle, dark wood -->
+  <rect x="10" y="26" width="160" height="48" rx="8" ry="8"
+        fill="#3d2418" stroke="#c9a961" stroke-width="2"/>
+
+  <!-- Inner counter area: lighter shade rectangle inside -->
+  <rect x="18" y="34" width="144" height="32" rx="4" ry="4"
+        fill="#5a3a26" stroke="#8a6a3a" stroke-width="1"/>
+
+  <!-- Stools: 5 small circles along the front side -->
+  <circle cx="28"  cy="86" r="6" fill="#2a1620" stroke="#c9a961" stroke-width="1.5"/>
+  <circle cx="62"  cy="86" r="6" fill="#2a1620" stroke="#c9a961" stroke-width="1.5"/>
+  <circle cx="96"  cy="86" r="6" fill="#2a1620" stroke="#c9a961" stroke-width="1.5"/>
+  <circle cx="130" cy="86" r="6" fill="#2a1620" stroke="#c9a961" stroke-width="1.5"/>
+  <circle cx="164" cy="86" r="6" fill="#2a1620" stroke="#c9a961" stroke-width="1.5"/>
+
+</svg>
