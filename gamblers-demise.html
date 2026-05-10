@@ -205,6 +205,9 @@
 </div><!-- /slot-bank-right -->
 
 </div><!-- /#casinoFloor -->
+<button id="startDayBtn" class="start-day-btn">
+  Start Day
+</button>
 </div><!-- /#phase1 -->
 
 
@@ -232,6 +235,7 @@
 </div>
 
 <button id="menuClose">Close</button>
+<button id="startDayBtn" class="start-day-btn">Start Day</button>
 </div>
 
 <div id="menuBackdrop" class="hidden"></div>
@@ -246,6 +250,7 @@
 </div>
 <button id="playBtn">PLAY</button>
 <div id="lastResult"></div>
+
 </div><!-- /#phase2 -->
 
 
@@ -260,5 +265,37 @@
 <p id="endMessage"></p>
 </div><!-- /#phase3 -->
 
+
+
+<div id="slotSettingsPopup" class="hidden">
+  <div class="slot-popup-inner">
+
+    <h3>Slot Settings</h3>
+
+    <!-- Win Rate -->
+    <label>Win Rate: <span id="winRateVal">50</span>%</label>
+    <input type="range" id="parameter_winRate" min="0" max="100" step="5" value="50">
+
+    <!-- Payout -->
+    <label>Payout Multiplier</label>
+    <select id="parameter_payout">
+      <option value="1">1x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+      <option value="2.5">2.5x</option>
+      <option value="3">3x</option>
+    </select>
+
+    <!-- Min Bet -->
+    <label>Minimum Bet: <span id="minBetVal">30</span></label>
+    <input type="range" id="parameter_minBet" min="0" max="100" step="5" value="30">
+
+    <!-- Override -->
+    <label>Override Chance: <span id="overrideVal">0</span></label>
+    <input type="range" id="parameter_override" min="0" max="1" step="1" value="0">
+
+    <button id="closeSlotPopup">Close</button>
+  </div>
+</div>
 </body>
 </html>
