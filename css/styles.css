@@ -41,8 +41,8 @@ h1.game-title {
 
 /* ─── PHASE WRAPPER ─────────────────────────────────────────── */
 .phase {
-  width: 100%;
-  max-width: 860px;
+  width: 100vw;
+  min-height: 100vh;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -784,4 +784,46 @@ h1.game-title {
 
 .bunny.walking {
   animation: bunnyHop 0.4s ease-in-out infinite;
+}
+
+.start-day-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+
+  padding: 14px 28px;
+  background: var(--border);
+  color: var(--bg);
+  border: 2px solid var(--border);
+
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+  z-index: 50;
+}
+
+.start-day-btn:hover {
+  background: var(--bg);
+  color: var(--border);
+  box-shadow: 4px 4px 0 var(--border);
+  transform: translate(-2px, -2px);
+}
+
+.start-day-btn:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+
+
+/* disabled state after click */
+.start-day-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
