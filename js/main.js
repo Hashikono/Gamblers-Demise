@@ -196,8 +196,84 @@ window.addEventListener('DOMContentLoaded', (event) => {
     
     // Initialize event listeners after DOM is ready
     initializeEventListeners();
+    initializeSliderOutputs();
 });
 
+//slider extra function whatever
+function initializeSliderOutputs() {
+    // Starting Player Money slider
+    const playerMoneySlider = document.getElementById('cheat_playerMoney');
+    const playerMoneyOutput = document.querySelector('output[for="cheat_playerMoney"]');
+    if (playerMoneySlider && playerMoneyOutput) {
+        playerMoneySlider.addEventListener('input', function() {
+            playerMoneyOutput.value = this.value;
+            playerMoneyOutput.textContent = this.value;
+        });
+    }
+
+    // Starting Bunny Money slider
+    const bunnyMoneySlider = document.getElementById('cheat_bunnyMoney');
+    const bunnyMoneyOutput = document.querySelector('output[for="cheat_bunnyMoney"]');
+    if (bunnyMoneySlider && bunnyMoneyOutput) {
+        bunnyMoneySlider.addEventListener('input', function() {
+            bunnyMoneyOutput.value = this.value;
+            bunnyMoneyOutput.textContent = this.value;
+        });
+    }
+
+    // Max Bunnies per Machine slider
+    const maxBunniesSlider = document.getElementById('cheat_maxBunnies');
+    const maxBunniesOutput = document.querySelector('output[for="cheat_maxBunnies"]');
+    if (maxBunniesSlider && maxBunniesOutput) {
+        maxBunniesSlider.addEventListener('input', function() {
+            maxBunniesOutput.value = this.value;
+            maxBunniesOutput.textContent = this.value;
+        });
+    }
+
+    // Max Bunny Tries slider
+    const maxTriesSlider = document.getElementById('cheat_maxTries');
+    const maxTriesOutput = document.querySelector('output[for="cheat_maxTries"]');
+    if (maxTriesSlider && maxTriesOutput) {
+        maxTriesSlider.addEventListener('input', function() {
+            maxTriesOutput.value = this.value;
+            maxTriesOutput.textContent = this.value;
+        });
+    }
+
+    // White Rabbit Chance slider
+    const whiteRabbitSlider = document.getElementById('cheat_whiteRabbitChance');
+    const whiteRabbitOutput = document.querySelector('output[for="cheat_whiteRabbitChance"]');
+    if (whiteRabbitSlider && whiteRabbitOutput) {
+        whiteRabbitSlider.addEventListener('input', function() {
+            whiteRabbitOutput.value = this.value;
+            whiteRabbitOutput.textContent = this.value + '%';
+        });
+    }
+
+    // Max Player Gambles slider
+    const playerTriesSlider = document.getElementById('cheat_playerTries');
+    const playerTriesOutput = document.querySelector('output[for="cheat_playerTries"]');
+    if (playerTriesSlider && playerTriesOutput) {
+        playerTriesSlider.addEventListener('input', function() {
+            playerTriesOutput.value = this.value;
+            playerTriesOutput.textContent = this.value;
+        });
+    }
+
+    // Gain % per Bunny slider
+    const gainPercentSlider = document.getElementById('cheat_gainPercent');
+    const gainPercentOutput = document.querySelector('output[for="cheat_gainPercent"]');
+    if (gainPercentSlider && gainPercentOutput) {
+        gainPercentSlider.addEventListener('input', function() {
+            gainPercentOutput.value = this.value;
+            gainPercentOutput.textContent = this.value + '%';
+        });
+    }
+}
+
+
+//regular events and buttons
 function initializeEventListeners() {
     const cheatOpenBtn = document.getElementById("cheat_open_btn");
     const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
@@ -235,6 +311,7 @@ function initializeEventListeners() {
             document.getElementById('cheatPopup').classList.add("hidden");
             document.getElementById('phase1').classList.remove("hidden");
             console.log(machineList);
+            //console.log(playerMoney);
         });
     }
 }
