@@ -37,7 +37,7 @@ h1.game-title {
 }
 
 /* ─── Utility ───────────────────────────────────────────────── */
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 /* ─── PHASE WRAPPER ─────────────────────────────────────────── */
 .phase {
@@ -765,4 +765,23 @@ h1.game-title {
 
 .cheat-submit {
   margin-top: 18px;
+}
+
+.bunny {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  transition: transform 0.3s ease, left 0.4s ease, top 0.4s ease;
+  /* JS sets left/top + transform: rotate() to face direction */
+}
+
+/* Tiny idle wiggle */
+@keyframes bunnyHop {
+  0%, 100% { transform: translateY(0) rotate(var(--dir, 0deg)); }
+  50%      { transform: translateY(-2px) rotate(var(--dir, 0deg)); }
+}
+
+.bunny.walking {
+  animation: bunnyHop 0.4s ease-in-out infinite;
 }
