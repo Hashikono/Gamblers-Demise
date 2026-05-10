@@ -608,7 +608,7 @@ function executePhase2Spin() {
             el.classList.remove("spinning");
             el.textContent = symbols[i];
             el.classList.add(didWin ? "reel-win" : "reel-lose");
-        }, 700 + i * 600);
+        }, 700 + i * 750);
     });
 
     setTimeout(() => {
@@ -637,7 +637,7 @@ function executePhase2Spin() {
         phase2Running = false;
 
         if (playerMoney < minBet || playerMoney <= 0) {
-            setTimeout(() => triggerGameOver(), 900);
+            setTimeout(() => triggerGameOver(), 1500);
             return;
         }
 
@@ -650,7 +650,7 @@ function executePhase2Spin() {
         }
 
         playBtn.disabled = false;
-    }, 3000);
+    }, 5000);
 }
 
 function updateP2Money() {
