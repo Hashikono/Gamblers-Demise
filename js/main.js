@@ -187,57 +187,57 @@ function machineCalc(mach){
 
 // ---------- Implementation ----------
 window.addEventListener('DOMContentLoaded', (event) => {
+    // Initial hiding of elements
     document.getElementById('startMenu').classList.remove("hidden");
     document.getElementById('cheatPopup').classList.add("hidden");
-    document.getElementById('phase1').classList.add("phase_hidden");
-    document.getElementById('phase2').classList.add("phase_hidden");
-    document.getElementById('phase3').classList.add("phase_hidden");
+    document.getElementById('phase1').classList.add("hidden");
+    document.getElementById('phase2').classList.add("hidden");
+    document.getElementById('phase3').classList.add("hidden");
+    
+    // Initialize event listeners after DOM is ready
+    initializeEventListeners();
 });
 
-//Cheat opening
-const cheatOpenBtn = document.getElementById("cheat_open_btn");
-cheatOpenBtn.addEventListener("click", () => {
-    //div management
-    document.getElementById('cheatPopup').classList.remove("hidden");
-
-    document.getElementById("cheat_playerMoney").value = playerMoney; 
-    document.getElementById("cheat_bunnyMoney").value = bunnyMoney; 
-    document.getElementById("cheat_maxBunnies").value = maxBunnies; 
-    document.getElementById("cheat_maxTries").value = bunnyTries; 
-    document.getElementById("cheat_whiteRabbitChance").value = whiteRabbitChance; 
-    document.getElementById("cheat_playerTries").value = maxAmountGamble; 
-    document.getElementById("cheat_gainPercent").value = percentageGain; 
-    //FIXME: OPENS POPUP OF CHEAT MENU
-});
-
-//Cheat submission
-const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
-cheatSubmitBtn.addEventListener("click", () => {
-    //div management
-    document.getElementById('cheatPopup').classList.add("hidden");
-
-    playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
-    bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
-    maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
-    bunnyTries = parseInt(document.getElementById("cheat_maxTries").value, 10);
-    whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
-    maxAmountGamble = parseInt(document.getElementById("cheat_playerTries").value, 10);
-    percentageGain = parseInt(document.getElementById("cheat_gainPercent").value, 10);
-    //FIXME: CLOSES POPUP OF CHEAT MENU
-});
-
-//Play button (initilization)
-const playBtn = document.getElementById("play_btn");
-playBtn.addEventListener("click", () => {
-    //div management
-    document.getElementById('startMenu').classList.add("hidden");
-    document.getElementById('cheatPopup').classList.add("hidden");
-    document.getElementById('phase1').classList.remove("phase_hidden");
-
-    //FIXME: BEGINS PHASE 1 (BEFORE START DAY)
-    console.log(machineList);
-});
-
+function initializeEventListeners() {
+    const cheatOpenBtn = document.getElementById("cheat_open_btn");
+    const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
+    const playBtn = document.getElementById("play_btn");
+    
+    if (cheatOpenBtn) {
+        cheatOpenBtn.addEventListener("click", () => {
+            document.getElementById('cheatPopup').classList.remove("hidden");
+            document.getElementById("cheat_playerMoney").value = playerMoney; 
+            document.getElementById("cheat_bunnyMoney").value = bunnyMoney; 
+            document.getElementById("cheat_maxBunnies").value = maxBunnies; 
+            document.getElementById("cheat_maxTries").value = bunnyTries; 
+            document.getElementById("cheat_whiteRabbitChance").value = whiteRabbitChance; 
+            document.getElementById("cheat_playerTries").value = maxAmountGamble; 
+            document.getElementById("cheat_gainPercent").value = percentageGain;
+        });
+    }
+    
+    if (cheatSubmitBtn) {
+        cheatSubmitBtn.addEventListener("click", () => {
+            document.getElementById('cheatPopup').classList.add("hidden");
+            playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
+            bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
+            maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
+            bunnyTries = parseInt(document.getElementById("cheat_maxTries").value, 10);
+            whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
+            maxAmountGamble = parseInt(document.getElementById("cheat_playerTries").value, 10);
+            percentageGain = parseInt(document.getElementById("cheat_gainPercent").value, 10);
+        });
+    }
+    
+    if (playBtn) {
+        playBtn.addEventListener("click", () => {
+            document.getElementById('startMenu').classList.add("hidden");
+            document.getElementById('cheatPopup').classList.add("hidden");
+            document.getElementById('phase1').classList.remove("hidden");
+            console.log(machineList);
+        });
+    }
+}
 
 
 
