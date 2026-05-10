@@ -16,18 +16,6 @@ var maxAmountGamble = 4;
 //Percentage of total gain/loss from bunnies
 var percentageGain = 100;
 
-//stores machines
-var machineCount = 9; //Must hard code this
-var zones = [true,false,false]; //zones available
-var machineList = []; //will be filled in the next section
-//initialize available machines
-for (let i = 0; i < machineCount; i++){
-    machineList.push(new Machine(i+1, false));
-}
-for (let i = 0; i < machineCount/zones.length; i++){
-    machineList[i].setMachineAvail(true);
-}
-
 //Bunny class : 
 //money() | trial()
 class Bunny { 
@@ -91,6 +79,18 @@ class Machine {
     //Handles override
     setOverride(limit) {this.override = limit;}
     getOverride() {return this.override;}
+}
+
+//stores machines
+var machineCount = 9; //Must hard code this
+var zones = [true,false,false]; //zones available
+var machineList = []; //will be filled in the next section
+//initialize available machines
+for (let i = 0; i < machineCount; i++){
+    machineList.push(new Machine(i+1, false));
+}
+for (let i = 0; i < machineCount/zones.length; i++){
+    machineList[i].setMachineAvail(true);
 }
 
 //random integer generator
@@ -189,9 +189,9 @@ function machineCalc(mach){
 window.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('startMenu').classList.remove("hidden");
     document.getElementById('cheatPopup').classList.add("hidden");
-    document.getElementById('phase1').classList.add("phase hidden");
-    document.getElementById('phase2').classList.add("phase hidden");
-    document.getElementById('phase3').classList.add("phase hidden");
+    document.getElementById('phase1').classList.add("phase_hidden");
+    document.getElementById('phase2').classList.add("phase_hidden");
+    document.getElementById('phase3').classList.add("phase_hidden");
 });
 
 //Cheat opening
@@ -232,7 +232,7 @@ playBtn.addEventListener("click", () => {
     //div management
     document.getElementById('startMenu').classList.add("hidden");
     document.getElementById('cheatPopup').classList.add("hidden");
-    document.getElementById('phase1').classList.remove("phase hidden");
+    document.getElementById('phase1').classList.remove("phase_hidden");
 
     //FIXME: BEGINS PHASE 1 (BEFORE START DAY)
     console.log(machineList);
