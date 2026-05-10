@@ -4,6 +4,8 @@ var dayCounter = 0;
 //Amount of money to start
 var playerMoney = 1000;
 var bunnyMoney = 100;
+//Max bunnies per zone/machine
+var maxBunnies = 9;
 //Max amount of tries bunnies will do
 var bunnyTries = 3;
 //Chance the owner has to even gamble in the first place
@@ -21,72 +23,97 @@ class Bunny {
     }
 
     //Handles Money
-    modMoney(amount) {
-        this.money = this.money + amount;
-    }
-
-    setMoney(amount) {
-        this.money = amount;
-    }
-
-    getMoney() {
-        return this.money;
-    }
+    modMoney(amount) {this.money = this.money + amount;}
+    setMoney(amount) {this.money = amount;}
+    getMoney() {return this.money;}
 
     //Handles Trials
-    modTrial(amount) {
-        this.money = this.money + amount;
-    }
-
-    setTrial(amount) {
-        this.money = amount;
-    }
-
-    getTrial() {
-        return this.money;
-    }
+    modTrial(amount) {this.money = this.money + amount;}
+    setTrial(amount) {this.money = amount;}
+    getTrial() {return this.money;}
     
 }
 
-//Slot zone/machine class
+//Machine [zone] class
 class Machine {
     constructor() {
         // Win rate : 0-100% (0% weight)
         this.winRate = 50;
         // Payout : 1x, 1.5x, 2x, 2.5x, 3x (10% per tier) (50% weight)
-        this.payout = 2;
+        this.payout = 2.0;
         // Minimum bet : $0 - $100 (round[dollar/2] => %) (50% weight)
         this.minBet = 50;
         // Override win rate : true/false (0% weight)
         this.override = false;
     }
 
-    //Handles
-    setMoney(amount) {
-        this.money = amount;
-    }
+    //Handles win rate
+    setWinRate(limit) {this.winRate = limit;}
+    getWinRate() {return this.winRate;}
 
-    getMoney() {
-        return this.money;
-    }
+    //Handles payout
+    setPayout(limit) {this.payout = limit;}
+    getPayout() {return this.payout;}
 
-    //Handles Trials
-    modTrial(amount) {
-        this.money = this.money + amount;
-    }
+    //Handles minimum bet
+    setMinBet(limit) {this.minBet = limit;}
+    getMinBet() {return this.minBet;}
 
-    setTrial(amount) {
-        this.money = amount;
-    }
-
-    getTrial() {
-        return this.money;
-    }
-    
+    //Handles override
+    setOverride(limit) {this.override = limit;}
+    getOverride() {return this.override;}
 }
 
-//Main slot calculation function
-function slot(){
+//random integer generator
+function rand100() {
+    const array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    return (array[0] % 100) + 1;
+}
+
+//Main machine calculation function
+function machineCalc(mach){
+    //mach = machine object
+    //percentage chance of bunnies to come
+    let attraction = 0;
+    let bunnyTurnout = 0;
+    let winningNum = rand100();
+    
+
+    //payout weight consideration
+    const pay = parseFloat(mach.getPayout());
+    if (payout >= 3.0) attraction += 50;
+    else if (payout >= 2.5) attraction += 40;
+    else if (payout >= 2.0) attraction += 30;
+    else if (payout >= 1.5) attraction += 20;
+    else if (payout >= 1.0) attraction += 10;
+
+    //bet weight consideration
+    attraction += Math.round(mach.getMinBet()/2);
+
+    //setting bunny turnout
+    for (let i = 0; i < maxBunnies; i++){
+        let tempRandom = rand100();
+        if (tempRandom <= attraction){
+            bunnyTurnout++;
+        }
+    }
+
+
+    return 
+
+
+    /*
+        // Win rate : 0-100% (0% weight)
+        this.winRate = 50;
+        // Payout : 1x, 1.5x, 2x, 2.5x, 3x (10% per tier) (50% weight)
+        this.payout = 2.0;
+        // Minimum bet : $0 - $100 (round[dollar/2] => %) (50% weight)
+        this.minBet = 50;
+        // Override win rate : true/false (0% weight)
+        this.override = false;
+    */
+    
 
 }
 
@@ -122,10 +149,6 @@ the basic goal is to survive as long as possible
 
 
 */
-
-const array = new Uint32Array(1);
-window.crypto.getRandomValues(array);
-console.log(array[0]); 
 
 
 
