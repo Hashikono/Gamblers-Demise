@@ -1,479 +1,312 @@
+// ──────────────────────────────────────────────────────────
 // Global parameters
+// ──────────────────────────────────────────────────────────
 var dayCounter = 0;
 var officialBunnyTurnout = 0;
 
-//Amount of money to start
 var playerMoney = 1000;
 var bunnyMoney = 100;
-//Max bunnies per zone/machine
 var maxBunnies = 5;
-//Max amount of tries bunnies will do
 var bunnyTries = 3;
-//Chance the owner has to even gamble in the first place
 var whiteRabbitChance = 100;
-//Max amount of times the user has to gamble in phase 2
 var maxAmountGamble = 4;
-//Percentage of total gain/loss from bunnies
 var percentageGain = 100;
 
-//Bunny class : 
-//money() | trial()
-class Bunny { 
+// Which slot is currently being edited
+var currentSlot = 1;
+
+
+// ──────────────────────────────────────────────────────────
+// Bunny class
+// ──────────────────────────────────────────────────────────
+class Bunny {
     constructor() {
-        // (int) money
         this.money = bunnyMoney;
-        // (int) tries
         this.tries = bunnyTries;
     }
-
-    //Handles Money
-    modMoney(amount) {this.money = this.money + amount;}
-    setMoney(amount) {this.money = amount;}
-    getMoney() {return this.money;}
-
-    //Handles Trials (deprecated)
-    modTrial(amount) {this.money = this.money + amount;}
-    setTrial(amount) {this.money = amount;}
-    getTrial() {return this.money;}
-    
+    modMoney(amount) { this.money = this.money + amount; }
+    setMoney(amount) { this.money = amount; }
+    getMoney() { return this.money; }
+    modTrial(amount) { this.tries = this.tries + amount; }
+    setTrial(amount) { this.tries = amount; }
+    getTrial() { return this.tries; }
 }
 
-//Machine [zone] class : 
-//machineNum() | machineAvail() | winRate() | payout() | minBet() | override()
+
+// ──────────────────────────────────────────────────────────
+// Machine class
+// ──────────────────────────────────────────────────────────
 class Machine {
     constructor(num, availability) {
-        // Machine number
         this.machineNum = num;
-        //Machine available/unlocked
         this.machineAvail = availability;
-        // Win rate : 0-100% (0% weight)
         this.winRate = 50;
-        // Payout : 1x, 1.5x, 2x, 2.5x, 3x (10% per tier) (50% weight)
         this.payout = 2.0;
-        // Minimum bet : $0 - $100 (round[dollar/2] => %) (50% weight)
         this.minBet = 50;
-        // Override win rate : true/false (0% weight)
         this.override = false;
     }
-
-    //Handles machine number
-    setMachineNum(limit) {this.machineNum = limit;}
-    getMachineNum() {return this.machineNum;}
-
-    //Handles machine availability
-    setMachineAvail(limit) {this.machineAvail = limit;}
-    getMachineAvail() {return this.machineAvail;}
-
-    //Handles win rate
-    setWinRate(limit) {this.winRate = limit;}
-    getWinRate() {return this.winRate;}
-
-    //Handles payout
-    setPayout(limit) {this.payout = limit;}
-    getPayout() {return this.payout;}
-
-    //Handles minimum bet
-    setMinBet(limit) {this.minBet = limit;}
-    getMinBet() {return this.minBet;}
-
-    //Handles override
-    setOverride(limit) {this.override = limit;}
-    getOverride() {return this.override;}
+    setMachineNum(v) { this.machineNum = v; }
+    getMachineNum()  { return this.machineNum; }
+    setMachineAvail(v) { this.machineAvail = v; }
+    getMachineAvail()  { return this.machineAvail; }
+    setWinRate(v) { this.winRate = v; }
+    getWinRate()  { return this.winRate; }
+    setPayout(v) { this.payout = v; }
+    getPayout()  { return this.payout; }
+    setMinBet(v) { this.minBet = v; }
+    getMinBet()  { return this.minBet; }
+    setOverride(v) { this.override = v; }
+    getOverride()  { return this.override; }
 }
 
-//stores machines
-var machineCount = 9; //Must hard code this
-var zones = [true,false,false]; //zones available
-var machineList = []; //will be filled in the next section
-//initialize available machines
-for (let i = 0; i < machineCount; i++){
-    machineList.push(new Machine(i+1, false));
+
+// ──────────────────────────────────────────────────────────
+// Machine list initialization
+// ──────────────────────────────────────────────────────────
+var machineCount = 9;
+var zones = [true, false, false];
+var machineList = [];
+
+for (let i = 0; i < machineCount; i++) {
+    machineList.push(new Machine(i + 1, false));
 }
-for (let i = 0; i < machineCount/zones.length; i++){
+for (let i = 0; i < machineCount / zones.length; i++) {
     machineList[i].setMachineAvail(true);
 }
 
-//random integer generator
+
+// ──────────────────────────────────────────────────────────
+// Random integer generator (1-100)
+// ──────────────────────────────────────────────────────────
 function rand100() {
     const array = new Uint32Array(1);
     window.crypto.getRandomValues(array);
     return (array[0] % 100) + 1;
 }
 
-//Main machine calculation function
-function machineCalc(mach){
-    //if machine is even unlocked
-    if (mach.getMachineAvail()){
-        //mach = machine object
-        //percentage chance of bunnies to come
-        let attraction = 0;
-        //Amount of bunnies that actually show up
-        let bunnyTurnout = 0;
-        //list of bunny wins (int)
-        let bunnyList = [];
 
-        //payout weight consideration
-        const pay = parseFloat(mach.getPayout());
-        if (payout >= 3.0) attraction += 50;
-        else if (payout >= 2.5) attraction += 40;
-        else if (payout >= 2.0) attraction += 30;
-        else if (payout >= 1.5) attraction += 20;
-        else if (payout >= 1.0) attraction += 10;
+// ──────────────────────────────────────────────────────────
+// Machine calculation (FIXED: was using undefined `payout`,
+// calling getMinBet without parens, calling currentBet())
+// ──────────────────────────────────────────────────────────
+function machineCalc(mach) {
+    if (!mach.getMachineAvail()) return [];
 
-        //bet weight consideration
-        attraction += Math.round(mach.getMinBet()/2);
+    let attraction = 0;
+    let bunnyTurnout = 0;
+    let bunnyList = [];
 
-        //setting bunny turnout
-        for (let i = 0; i < maxBunnies; i++){
-            let tempRandom = rand100();
-            if (tempRandom <= attraction){
-                bunnyTurnout++;
-            }
-        }
-        
-        //setting official turnout
-        officialBunnyTurnout += bunnyTurnout;
+    const pay = parseFloat(mach.getPayout());
+    if (pay >= 3.0)      attraction += 50;
+    else if (pay >= 2.5) attraction += 40;
+    else if (pay >= 2.0) attraction += 30;
+    else if (pay >= 1.5) attraction += 20;
+    else if (pay >= 1.0) attraction += 10;
 
-        //official winnings calculation
-        for (let i = 0; i < bunnyTurnout; i++){
-            //individual bunny earnings
-            let earnings = 0;
-            let currentBunny = new Bunny();
-            currentBet = mach.getMinBet();
-            //trials for each bunny
-            for (let t = 0; t < bunnyTries; t++){
-                //if they still have money to bet on the machine
-                if (currentBunny.getMoney() >= currentBet()){ //can continue with increased bet
-                    //If they win
-                    let winNum = rand100();
-                    currentBunny.modMoney(-currentBet);
-                    earnings += currentBet;
+    attraction += Math.round(mach.getMinBet() / 2);
 
-                    if (mach.getOverride() && winNum <= 10){ //overriding
-                        currentBet = mach.getMinBet();
-                    } else if (winNum <= mach.getWinRate()){ //actual win
-                        earnings -= currentBet*mach.getPayout();
-                        currentBunny.modMoney(currentBet*mach.getPayout());
-                        currentBet += currentBunny.getMoney()*0.1; //current bet may add 10%
-                    } else { //actual loss
-                        currentBet = mach.getMinBet();
-                    }
-                } 
-                else if (currentBunny.getMoney() >= mach.getMinBet){ //returns back to original bet
+    for (let i = 0; i < maxBunnies; i++) {
+        if (rand100() <= attraction) bunnyTurnout++;
+    }
+    officialBunnyTurnout += bunnyTurnout;
+
+    for (let i = 0; i < bunnyTurnout; i++) {
+        let earnings = 0;
+        let currentBunny = new Bunny();
+        let currentBet = mach.getMinBet();
+
+        for (let t = 0; t < bunnyTries; t++) {
+            if (currentBunny.getMoney() >= currentBet) {
+                let winNum = rand100();
+                currentBunny.modMoney(-currentBet);
+                earnings += currentBet;
+
+                if (mach.getOverride() && winNum <= 10) {
                     currentBet = mach.getMinBet();
-                    //If they win
-                    let winNum = rand100();
-                    currentBunny.modMoney(-currentBet);
-                    earnings += currentBet;
+                } else if (winNum <= mach.getWinRate()) {
+                    earnings -= currentBet * mach.getPayout();
+                    currentBunny.modMoney(currentBet * mach.getPayout());
+                    currentBet += currentBunny.getMoney() * 0.1;
+                } else {
+                    currentBet = mach.getMinBet();
+                }
+            } else if (currentBunny.getMoney() >= mach.getMinBet()) {
+                currentBet = mach.getMinBet();
+                let winNum = rand100();
+                currentBunny.modMoney(-currentBet);
+                earnings += currentBet;
 
-                    if (mach.getOverride() && winNum <= 10){ //overriding
-                        currentBet = mach.getMinBet();
-                    } else if (winNum <= mach.getWinRate()){ //actual win
-                        earnings -= currentBet*mach.getPayout();
-                        currentBunny.modMoney(currentBet*mach.getPayout());
-                        currentBet += currentBunny.getMoney()*0.1; //current bet may add 10%
-                    } else { //actual loss
-                        currentBet = mach.getMinBet();
-                    }
+                if (mach.getOverride() && winNum <= 10) {
+                    currentBet = mach.getMinBet();
+                } else if (winNum <= mach.getWinRate()) {
+                    earnings -= currentBet * mach.getPayout();
+                    currentBunny.modMoney(currentBet * mach.getPayout());
+                    currentBet += currentBunny.getMoney() * 0.1;
+                } else {
+                    currentBet = mach.getMinBet();
                 }
             }
-
-            bunnyList.push(earnings*(percentageGain/100));
         }
 
-        return bunnyList;    
+        bunnyList.push(earnings * (percentageGain / 100));
+    }
+
+    return bunnyList;
+}
+
+
+// ──────────────────────────────────────────────────────────
+// SLOT POPUP — open / populate / save
+// ──────────────────────────────────────────────────────────
+function openSlotPopup(slotNum) {
+    currentSlot = slotNum;
+    const m = machineList[slotNum - 1];
+
+    // Populate fields with current machine values
+    document.getElementById("machineTargetLabel").textContent = slotNum;
+    document.getElementById("parameter_winRate").value = m.getWinRate();
+    document.getElementById("winRateVal").textContent = m.getWinRate();
+    document.getElementById("parameter_payout").value = m.getPayout();
+    document.getElementById("parameter_minBet").value = m.getMinBet();
+    document.getElementById("minBetVal").textContent = m.getMinBet();
+    document.getElementById("parameter_override").value = m.getOverride() ? 1 : 0;
+    document.getElementById("overrideVal").textContent = m.getOverride() ? "On" : "Off";
+
+    document.getElementById("machinePopup").classList.remove("hidden");
+}
+
+function closeSlotPopup() {
+    document.getElementById("machinePopup").classList.add("hidden");
+}
+
+function saveSlotPopup() {
+    const m = machineList[currentSlot - 1];
+    m.setWinRate(parseInt(document.getElementById("parameter_winRate").value, 10));
+    m.setPayout(parseFloat(document.getElementById("parameter_payout").value));
+    m.setMinBet(parseInt(document.getElementById("parameter_minBet").value, 10));
+    m.setOverride(document.getElementById("parameter_override").value === "1");
+    closeSlotPopup();
+}
+
+
+// ──────────────────────────────────────────────────────────
+// Slider live-output updates inside the cheat popup
+// ──────────────────────────────────────────────────────────
+function initializeSliderOutputs() {
+    document.querySelectorAll('#cheatPopup input[type="range"]').forEach(slider => {
+        const out = document.querySelector(`output[for="${slider.id}"]`);
+        if (!out) return;
+        out.value = slider.value;
+        slider.addEventListener("input", () => {
+            out.value = slider.value;
+            out.textContent = slider.value;
+        });
+    });
+
+    // Slot popup live values
+    const winRate = document.getElementById("parameter_winRate");
+    if (winRate) {
+        winRate.addEventListener("input", () => {
+            document.getElementById("winRateVal").textContent = winRate.value;
+        });
+    }
+    const minBet = document.getElementById("parameter_minBet");
+    if (minBet) {
+        minBet.addEventListener("input", () => {
+            document.getElementById("minBetVal").textContent = minBet.value;
+        });
+    }
+    const override = document.getElementById("parameter_override");
+    if (override) {
+        override.addEventListener("input", () => {
+            document.getElementById("overrideVal").textContent =
+                override.value === "1" ? "On" : "Off";
+        });
     }
 }
 
-// ---------- Implementation ----------
-window.addEventListener('DOMContentLoaded', (event) => {
-    // Initial hiding of elements
-    document.getElementById('startMenu').classList.remove("hidden");
-    document.getElementById('cheatPopup').classList.add("hidden");
-    document.getElementById('phase1').classList.add("hidden");
-    document.getElementById('phase2').classList.add("hidden");
-    document.getElementById('phase3').classList.add("hidden");
-    
-    // Initialize event listeners after DOM is ready
+
+// ──────────────────────────────────────────────────────────
+// All event listeners
+// ──────────────────────────────────────────────────────────
+function initializeEventListeners() {
+    // Cheat popup open
+    document.getElementById("cheat_open_btn").addEventListener("click", () => {
+        document.getElementById("cheatPopup").classList.remove("hidden");
+        document.getElementById("cheat_playerMoney").value = playerMoney;
+        document.getElementById("cheat_bunnyMoney").value = bunnyMoney;
+        document.getElementById("cheat_maxBunnies").value = maxBunnies;
+        document.getElementById("cheat_maxTries").value = bunnyTries;
+        document.getElementById("cheat_whiteRabbitChance").value = whiteRabbitChance;
+        document.getElementById("cheat_playerTries").value = maxAmountGamble;
+        document.getElementById("cheat_gainPercent").value = percentageGain;
+
+        // Sync outputs after setting values
+        document.querySelectorAll('#cheatPopup input[type="range"]').forEach(slider => {
+            const out = document.querySelector(`output[for="${slider.id}"]`);
+            if (out) {
+                out.value = slider.value;
+                out.textContent = slider.value;
+            }
+        });
+    });
+
+    // Cheat popup submit
+    document.getElementById("cheat_submit_btn").addEventListener("click", () => {
+        document.getElementById("cheatPopup").classList.add("hidden");
+        playerMoney       = parseInt(document.getElementById("cheat_playerMoney").value, 10);
+        bunnyMoney        = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
+        maxBunnies        = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
+        bunnyTries        = parseInt(document.getElementById("cheat_maxTries").value, 10);
+        whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
+        maxAmountGamble   = parseInt(document.getElementById("cheat_playerTries").value, 10);
+        percentageGain    = parseInt(document.getElementById("cheat_gainPercent").value, 10);
+    });
+
+    // Play button → enter Phase 1
+    document.getElementById("play_btn").addEventListener("click", () => {
+        document.getElementById("startMenu").classList.add("hidden");
+        document.getElementById("cheatPopup").classList.add("hidden");
+        document.getElementById("phase1").classList.remove("hidden");
+        console.log(machineList);
+    });
+
+    // Wire up all 9 slot hitboxes to open the slot popup
+    for (let i = 1; i <= 9; i++) {
+        const slot = document.getElementById("slot" + i);
+        if (slot) {
+            slot.addEventListener("click", () => openSlotPopup(i));
+        }
+    }
+
+    // Slot popup submit
+    const machineSubmitBtn = document.getElementById("machine_submit_btn");
+    if (machineSubmitBtn) {
+        machineSubmitBtn.addEventListener("click", saveSlotPopup);
+    }
+
+    // Start Day button (placeholder)
+    const startDayBtn = document.getElementById("startDayBtn");
+    if (startDayBtn) {
+        startDayBtn.addEventListener("click", () => {
+            console.log("Running day with machines:", machineList);
+            // TODO: loop machineCalc(machineList[i]) for active machines
+        });
+    }
+}
+
+
+// ──────────────────────────────────────────────────────────
+// Boot
+// ──────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById("startMenu").classList.remove("hidden");
+    document.getElementById("cheatPopup").classList.add("hidden");
+    document.getElementById("phase1").classList.add("hidden");
+    document.getElementById("phase2").classList.add("hidden");
+    document.getElementById("phase3").classList.add("hidden");
+    document.getElementById("machinePopup").classList.add("hidden");
+
     initializeEventListeners();
     initializeSliderOutputs();
 });
-
-//slider extra function whatever
-function initializeSliderOutputs() {
-    // Starting Player Money slider
-    const playerMoneySlider = document.getElementById('cheat_playerMoney');
-    const playerMoneyOutput = document.querySelector('output[for="cheat_playerMoney"]');
-    if (playerMoneySlider && playerMoneyOutput) {
-        playerMoneySlider.addEventListener('input', function() {
-            playerMoneyOutput.value = this.value;
-            playerMoneyOutput.textContent = this.value;
-        });
-    }
-
-    // Starting Bunny Money slider
-    const bunnyMoneySlider = document.getElementById('cheat_bunnyMoney');
-    const bunnyMoneyOutput = document.querySelector('output[for="cheat_bunnyMoney"]');
-    if (bunnyMoneySlider && bunnyMoneyOutput) {
-        bunnyMoneySlider.addEventListener('input', function() {
-            bunnyMoneyOutput.value = this.value;
-            bunnyMoneyOutput.textContent = this.value;
-        });
-    }
-
-    // Max Bunnies per Machine slider
-    const maxBunniesSlider = document.getElementById('cheat_maxBunnies');
-    const maxBunniesOutput = document.querySelector('output[for="cheat_maxBunnies"]');
-    if (maxBunniesSlider && maxBunniesOutput) {
-        maxBunniesSlider.addEventListener('input', function() {
-            maxBunniesOutput.value = this.value;
-            maxBunniesOutput.textContent = this.value;
-        });
-    }
-
-    // Max Bunny Tries slider
-    const maxTriesSlider = document.getElementById('cheat_maxTries');
-    const maxTriesOutput = document.querySelector('output[for="cheat_maxTries"]');
-    if (maxTriesSlider && maxTriesOutput) {
-        maxTriesSlider.addEventListener('input', function() {
-            maxTriesOutput.value = this.value;
-            maxTriesOutput.textContent = this.value;
-        });
-    }
-
-    // White Rabbit Chance slider
-    const whiteRabbitSlider = document.getElementById('cheat_whiteRabbitChance');
-    const whiteRabbitOutput = document.querySelector('output[for="cheat_whiteRabbitChance"]');
-    if (whiteRabbitSlider && whiteRabbitOutput) {
-        whiteRabbitSlider.addEventListener('input', function() {
-            whiteRabbitOutput.value = this.value;
-            whiteRabbitOutput.textContent = this.value + '%';
-        });
-    }
-
-    // Max Player Gambles slider
-    const playerTriesSlider = document.getElementById('cheat_playerTries');
-    const playerTriesOutput = document.querySelector('output[for="cheat_playerTries"]');
-    if (playerTriesSlider && playerTriesOutput) {
-        playerTriesSlider.addEventListener('input', function() {
-            playerTriesOutput.value = this.value;
-            playerTriesOutput.textContent = this.value;
-        });
-    }
-
-    // Gain % per Bunny slider
-    const gainPercentSlider = document.getElementById('cheat_gainPercent');
-    const gainPercentOutput = document.querySelector('output[for="cheat_gainPercent"]');
-    if (gainPercentSlider && gainPercentOutput) {
-        gainPercentSlider.addEventListener('input', function() {
-            gainPercentOutput.value = this.value;
-            gainPercentOutput.textContent = this.value + '%';
-        });
-    }
-}
-
-var currentSlot = 1;
-//regular events and buttons
-function initializeEventListeners() {
-    const cheatOpenBtn = document.getElementById("cheat_open_btn");
-    const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
-    const playBtn = document.getElementById("play_btn");
-    const runDayBtn = document.getElementById("run_day_btn");
-
-    const machine1 = document.getElementById("slot1");
-    const machine2 = document.getElementById("slot2");
-    const machine3 = document.getElementById("slot3");
-    const machine4 = document.getElementById("slot4");
-    const machine5 = document.getElementById("slot5");
-    const machine6 = document.getElementById("slot6");
-    const machine7 = document.getElementById("slot7");
-    const machine8 = document.getElementById("slot8");
-    const machine9 = document.getElementById("slot9");
-
-    const machineSubmitBtn= document.getElementById("machine_submit_button")
-    
-    //Setting open button
-    if (cheatOpenBtn) {
-        cheatOpenBtn.addEventListener("click", () => {
-            document.getElementById('cheatPopup').classList.remove("hidden");
-            document.getElementById("cheat_playerMoney").value = playerMoney; 
-            document.getElementById("cheat_bunnyMoney").value = bunnyMoney; 
-            document.getElementById("cheat_maxBunnies").value = maxBunnies; 
-            document.getElementById("cheat_maxTries").value = bunnyTries; 
-            document.getElementById("cheat_whiteRabbitChance").value = whiteRabbitChance; 
-            document.getElementById("cheat_playerTries").value = maxAmountGamble; 
-            document.getElementById("cheat_gainPercent").value = percentageGain;
-        });
-    }
-    
-    //setting submission
-    if (cheatSubmitBtn) {
-        cheatSubmitBtn.addEventListener("click", () => {
-            document.getElementById('cheatPopup').classList.add("hidden");
-            playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
-            bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
-            maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
-            bunnyTries = parseInt(document.getElementById("cheat_maxTries").value, 10);
-            whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
-            maxAmountGamble = parseInt(document.getElementById("cheat_playerTries").value, 10);
-            percentageGain = parseInt(document.getElementById("cheat_gainPercent").value, 10);
-        });
-    }
-    
-    //Casino parameter edits
-    // Machine 1
-    if (machine1) {
-        machine1.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 1;
-        });
-    }
-
-    // Machine 2
-    if (machine2) {
-        machine2.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 2;
-        });
-    }
-
-    // Machine 3
-    if (machine3) {
-        machine3.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 3;
-        });
-    }
-
-    // Machine 4
-    if (machine4) {
-        machine4.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 4;
-        });
-    }
-
-    // Machine 5
-    if (machine5) {
-        machine5.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 5;
-        });
-    }
-
-    // Machine 6
-    if (machine6) {
-        machine6.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 6;
-        });
-    }
-
-    // Machine 7
-    if (machine7) {
-        machine7.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 7;
-        });
-    }
-
-    // Machine 8
-    if (machine8) {
-        machine8.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 8;
-        });
-    }
-
-    // Machine 9
-    if (machine9) {
-        machine9.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.remove("hidden");
-            currentSlot = 9;
-        });
-    }
-    
-    //machine parameter submission
-    if (machineSubmitBtn) {
-        machineSubmitBtn.addEventListener("click", () => {
-            document.getElementById('machinePopup').classList.add("hidden");
-            machineList[currentSlot-1].setWinRate() = parseInt(document.getElementById("parameter_winRate").value, 10);
-
-            //machineNum() | machineAvail() | winRate() | payout() | minBet() | override()
-             /*//stores machines
-            var machineCount = 9; //Must hard code this
-            var machineList = []; //will be filled in the next section
-            //initialize available machines
-            for (let i = 0; i < machineCount; i++){
-                machineList.push(new Machine(i+1, false));
-            }
-            for (let i = 0; i < machineCount/zones.length; i++){
-                machineList[i].setMachineAvail(true);
-            } */
-
-            playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
-            bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
-            maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
-            bunnyTries = parseInt(document.getElementById("cheat_maxTries").value, 10);
-            whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
-            maxAmountGamble = parseInt(document.getElementById("cheat_playerTries").value, 10);
-            percentageGain = parseInt(document.getElementById("cheat_gainPercent").value, 10);
-        });
-    }
-
-    /*<!-- Win Rate (0-100%, increments of 5%) -->
-<input type="range" id="parameter_winRate" min="0" max="100" step="5" value="50">
-
-<!-- Payout Multiplier (1x, 1.5x, 2x, 2.5x, 3x) -->
-<select id="parameter_payout">
-  <option value="1">1x</option>
-  <option value="1.5">1.5x</option>
-  <option value="2">2x</option>
-  <option value="2.5">2.5x</option>
-  <option value="3">3x</option>
-</select>
-
-<!-- Minimum Bet (0-100, steps of 5) -->
-<input type="range" id="parameter_minBet" min="0" max="100" step="5" value="30">
-
-<!-- Override Win Rate (0-100%, chance to override round with 0% win rate) -->
-<input type="range" id="parameter_override" min="0" max="1" step="1" value="0">
-*/
-
-    
-    //play button (just moves to the next screen)
-    if (playBtn) {
-        playBtn.addEventListener("click", () => {
-            document.getElementById('startMenu').classList.add("hidden");
-            document.getElementById('cheatPopup').classList.add("hidden");
-            document.getElementById('phase1').classList.remove("hidden");
-            console.log(machineList);
-            //console.log(playerMoney);
-        });
-    }
-
-    //Running the day
-    if (runDayBtn) {
-        runDayBtn.addEventListener("click", () => {
-            for()
-
-            /*//stores machines
-            var machineCount = 9; //Must hard code this
-            var zones = [true,false,false]; //zones available
-            var machineList = []; //will be filled in the next section
-            //initialize available machines
-            for (let i = 0; i < machineCount; i++){
-                machineList.push(new Machine(i+1, false));
-            }
-            for (let i = 0; i < machineCount/zones.length; i++){
-                machineList[i].setMachineAvail(true);
-            } */
-        });
-    }
-    
-
-}
-
-
-
-

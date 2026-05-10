@@ -12,9 +12,7 @@
 
 
 <!-- ══════════════════════════════════════════════════════
-     START MENU — visible by default
-     JS controls: #play_btn click → hide #startMenu, show #phase1
-                  #cheat_open_btn click → show #cheatPopup
+     START MENU
 ═══════════════════════════════════════════════════════ -->
 <div id="startMenu" class="start-menu">
   <div class="start-menu-inner">
@@ -26,8 +24,7 @@
 
 
 <!-- ══════════════════════════════════════════════════════
-     CHEAT / SETTINGS POPUP — hidden by default
-     JS controls: open by removing .hidden, close on submit
+     CHEAT / SETTINGS POPUP
 ═══════════════════════════════════════════════════════ -->
 <div id="cheatPopup" class="hidden">
   <div class="cheat-popup-inner">
@@ -79,223 +76,168 @@
   </div>
 </div>
 
-<img class="bunny" src="assets/bunny.svg" alt="" />
+
 <!-- ══════════════════════════════════════════════════════
-     PHASE 1: DESIGN YOUR CASINO — hidden by default
+     PHASE 1
 ═══════════════════════════════════════════════════════ -->
 <div id="phase1" class="hidden">
-<div class="phase-label">Phase 1 — Design Your Casino</div>
-<div class="bunny-counter">Bunny Count: <span id="bunnyCount">0</span> / 15</div>
-<div id="casinoFloor">
+  <div class="phase-label">Phase 1 — Design Your Casino</div>
+  <div class="bunny-counter">Bunny Count: <span id="bunnyCount">0</span> / 15</div>
 
-<!-- Entrance markers -->
-<span class="entrance-left">Enter</span>
-<div class="door-notch-left"></div>
-<div class="door-notch"></div>
-<span class="entrance-bottom">Enter</span>
+  <div id="casinoFloor">
+    <span class="entrance-left">Enter</span>
+    <div class="door-notch-left"></div>
+    <div class="door-notch"></div>
+    <span class="entrance-bottom">Enter</span>
 
-<!-- ── TOP ROW: Zone 1 slot bank + Bar ─────────────── -->
-<div class="top-row">
-<div class="slot-bank-top">
-<div class="zone-label" style="align-self:center; writing-mode:vertical-lr; margin-right:6px;">1</div>
+    <div class="top-row">
+      <div class="slot-bank-top">
+        <div class="zone-label" style="align-self:center; writing-mode:vertical-lr; margin-right:6px;">1</div>
 
-<!-- Slot 1 -->
-<div class="slotMachine horizontal">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot1"></button>
-</div>
+        <div class="slotMachine horizontal">
+          <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+          <button class="slotHitbox" id="slot1"></button>
+        </div>
 
-<!-- Slot 2 -->
-<div class="slotMachine horizontal">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot2"></button>
-</div>
+        <div class="slotMachine horizontal">
+          <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+          <button class="slotHitbox" id="slot2"></button>
+        </div>
 
-<!-- Slot 3 -->
-<div class="slotMachine horizontal">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot3"></button>
-</div>
+        <div class="slotMachine horizontal">
+          <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+          <button class="slotHitbox" id="slot3"></button>
+        </div>
+      </div>
+      <div class="bar-area">Bar</div>
+    </div>
 
-</div><!-- /slot-bank-top -->
-<div class="bar-area">Bar</div>
-</div><!-- /top-row -->
+    <div class="slot-bank-left locked" id="zone2">
+      <div class="zone-label">2</div>
 
-<!-- ── LEFT COLUMN: Zone 2 ──────────────────────────── -->
-<div class="slot-bank-left locked" id="zone2">
-<div class="zone-label">2</div>
+      <div class="slotMachine">
+        <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+        <button class="slotHitbox" id="slot4"></button>
+      </div>
 
-<!-- Slot 4 -->
-<div class="slotMachine">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot4"></button>
-</div>
+      <div class="slotMachine">
+        <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+        <button class="slotHitbox" id="slot5"></button>
+      </div>
 
-<!-- Slot 5 -->
-<div class="slotMachine">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot5"></button>
-</div>
+      <div class="slotMachine">
+        <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+        <button class="slotHitbox" id="slot6"></button>
+      </div>
 
-<!-- Slot 6 -->
-<div class="slotMachine">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot6"></button>
-</div>
+      <button class="zone-unlock-btn" data-zone="2" data-cost="2000">
+        <span class="pill">
+          <span class="price">$2K</span>
+          <span class="label">Unlock Zone 2</span>
+        </span>
+      </button>
+    </div>
 
-<button class="zone-unlock-btn" data-zone="2" data-cost="2000">
-<span class="pill">
-<span class="price">$2K</span>
-<span class="label">Unlock Zone 2</span>
-</span>
-</button>
-</div><!-- /slot-bank-left -->
+    <div class="center-area">
+      <div class="zone-number">3</div>
+    </div>
 
-<!-- ── CENTER ─────────────────────────────────────── -->
-<div class="center-area">
-<div class="zone-number">3</div>
-</div>
+    <div class="slot-bank-right locked zone3-disabled" id="zone3">
+      <div class="zone-label" style="text-align:right;">3</div>
 
-<!-- ── RIGHT COLUMN: Zone 3 ──────────────────────── -->
-<div class="slot-bank-right locked zone3-disabled" id="zone3">
-<div class="zone-label" style="text-align:right;">3</div>
+      <div class="slotMachine">
+        <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+        <button class="slotHitbox" id="slot7"></button>
+      </div>
 
-<!-- Slot 7 -->
-<div class="slotMachine">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot7"></button>
-</div>
+      <div class="slotMachine">
+        <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+        <button class="slotHitbox" id="slot8"></button>
+      </div>
 
-<!-- Slot 8 -->
-<div class="slotMachine">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot8"></button>
-</div>
+      <div class="slotMachine">
+        <div class="slotVisual"><img src="assets/slot-machine.svg" alt="" /></div>
+        <button class="slotHitbox" id="slot9"></button>
+      </div>
 
-<!-- Slot 9 -->
-<div class="slotMachine">
-<div class="slotVisual">
-<img src="assets/slot-machine.svg" alt="" />
-</div>
-<button class="slotHitbox" id="slot9"></button>
-</div>
+      <button class="zone-unlock-btn" data-zone="3" data-cost="2000">
+        <span class="pill">
+          <span class="price">$2K</span>
+          <span class="label">Unlock Zone 3</span>
+        </span>
+      </button>
+    </div>
+  </div><!-- /#casinoFloor -->
 
-<button class="zone-unlock-btn" data-zone="3" data-cost="2000">
-<span class="pill">
-<span class="price">$2K</span>
-<span class="label">Unlock Zone 3</span>
-</span>
-</button>
-</div><!-- /slot-bank-right -->
-
-</div><!-- /#casinoFloor -->
-<button id="startDayBtn" class="start-day-btn">
-  Start Day
-</button>
+  <button id="startDayBtn" class="start-day-btn">Start Day</button>
 </div><!-- /#phase1 -->
 
 
-<!-- Slot machine settings (per-slot) -->
-<div id="machineMenu" class="hidden" data-target="">
-<h3>Machine Settings</h3>
-<div class="menu-target">Editing: <span id="menuTargetLabel">—</span></div>
+<!-- ══════════════════════════════════════════════════════
+     SLOT MACHINE SETTINGS POPUP (NEW — clean version)
+     Opens when any slotHitbox is clicked.
+     JS reads currentSlot, populates fields from
+     machineList[currentSlot-1], saves on submit.
+═══════════════════════════════════════════════════════ -->
+<div id="machinePopup" class="hidden">
+  <div class="machine-popup-inner">
+    <h3>Slot <span id="machineTargetLabel">1</span> Settings</h3>
 
-<div class="menu-field">
-<label for="sliderWinRate">Win Rate</label>
-<input type="range" id="sliderWinRate" min="0" max="100" value="20" />
-<span class="range-val" id="valWinRate">20%</span>
+    <div class="machine-field">
+      <label for="parameter_winRate">Win Rate: <span id="winRateVal">50</span>%</label>
+      <input type="range" id="parameter_winRate" min="0" max="100" step="5" value="50">
+    </div>
+
+    <div class="machine-field">
+      <label for="parameter_payout">Payout Multiplier</label>
+      <select id="parameter_payout">
+        <option value="1">1×</option>
+        <option value="1.5">1.5×</option>
+        <option value="2" selected>2×</option>
+        <option value="2.5">2.5×</option>
+        <option value="3">3×</option>
+      </select>
+    </div>
+
+    <div class="machine-field">
+      <label for="parameter_minBet">Minimum Bet: $<span id="minBetVal">50</span></label>
+      <input type="range" id="parameter_minBet" min="0" max="100" step="5" value="50">
+    </div>
+
+    <div class="machine-field">
+      <label for="parameter_override">
+        Override Win Rate: <span id="overrideVal">Off</span>
+      </label>
+      <input type="range" id="parameter_override" min="0" max="1" step="1" value="0">
+    </div>
+
+    <button id="machine_submit_btn" class="menu-btn">Save & Close</button>
+  </div>
 </div>
-
-<div class="menu-field">
-<label for="sliderPayout">Payout Multiplier</label>
-<input type="range" id="sliderPayout" min="1" max="20" value="5" />
-<span class="range-val" id="valPayout">5×</span>
-</div>
-
-<div class="menu-field">
-<label for="sliderStartMoney">Starting Player Money</label>
-<input type="range" id="sliderStartMoney" min="100" max="5000" step="100" value="1000" />
-<span class="range-val" id="valStartMoney">$1000</span>
-</div>
-
-<button id="menuClose">Close</button>
-<button id="startDayBtn" class="start-day-btn">Start Day</button>
-</div>
-
-<div id="menuBackdrop" class="hidden"></div>
 
 
 <!-- PHASE 2 -->
 <div id="phase2" class="hidden">
-<div class="phase-label">Phase 2 — Victim Mode</div>
-<div class="hud">
-<div>Money: $<span id="money">1000</span></div>
-<div><span id="timer">05:00</span></div>
+  <div class="phase-label">Phase 2 — Victim Mode</div>
+  <div class="hud">
+    <div>Money: $<span id="money">1000</span></div>
+    <div><span id="timer">05:00</span></div>
+  </div>
+  <button id="playBtn">PLAY</button>
+  <div id="lastResult"></div>
 </div>
-<button id="playBtn">PLAY</button>
-<div id="lastResult"></div>
-
-</div><!-- /#phase2 -->
 
 
 <!-- PHASE 3 -->
 <div id="phase3" class="hidden">
-<div class="phase-label">Phase 3 — End Screen</div>
-<h2>Game Over</h2>
-<div>
-<div class="survive-label">Time Survived</div>
-<span id="surviveTime"></span>
-</div>
-<p id="endMessage"></p>
-</div><!-- /#phase3 -->
-
-
-
-<div id="slotSettingsPopup" class="hidden">
-  <div class="slot-popup-inner">
-
-    <h3>Slot Settings</h3>
-
-    <!-- Win Rate -->
-    <label>Win Rate: <span id="winRateVal">50</span>%</label>
-    <input type="range" id="parameter_winRate" min="0" max="100" step="5" value="50">
-
-    <!-- Payout -->
-    <label>Payout Multiplier</label>
-    <select id="parameter_payout">
-      <option value="1">1x</option>
-      <option value="1.5">1.5x</option>
-      <option value="2">2x</option>
-      <option value="2.5">2.5x</option>
-      <option value="3">3x</option>
-    </select>
-
-    <!-- Min Bet -->
-    <label>Minimum Bet: <span id="minBetVal">30</span></label>
-    <input type="range" id="parameter_minBet" min="0" max="100" step="5" value="30">
-
-    <!-- Override -->
-    <label>Override Chance: <span id="overrideVal">0</span></label>
-    <input type="range" id="parameter_override" min="0" max="1" step="1" value="0">
-
-    <button id="closeSlotPopup">Close</button>
+  <div class="phase-label">Phase 3 — End Screen</div>
+  <h2>Game Over</h2>
+  <div>
+    <div class="survive-label">Time Survived</div>
+    <span id="surviveTime"></span>
   </div>
+  <p id="endMessage"></p>
 </div>
+
 </body>
 </html>

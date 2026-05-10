@@ -827,3 +827,81 @@ h1.game-title {
   transform: none;
   box-shadow: none;
 }
+/* ════════════════════════════════════════════════════════
+   APPEND TO css/styles.css
+   Styles for the new #machinePopup slot settings dialog
+════════════════════════════════════════════════════════ */
+
+#machinePopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.machine-popup-inner {
+  background: var(--bg);
+  border: 2.5px solid var(--border);
+  box-shadow: 6px 6px 0 var(--border);
+  padding: 28px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.machine-popup-inner h3 {
+  font-size: 0.95rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  border-bottom: 1.5px solid var(--border);
+  padding-bottom: 10px;
+}
+
+.machine-popup-inner h3 #machineTargetLabel {
+  color: #c0392b;
+}
+
+.machine-field {
+  margin-bottom: 18px;
+}
+
+.machine-field label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.machine-field label span {
+  color: var(--border);
+  font-weight: bold;
+}
+
+.machine-field input[type="range"] {
+  width: 100%;
+  accent-color: #c0392b;
+}
+
+.machine-field select {
+  width: 100%;
+  padding: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--border);
+  cursor: pointer;
+}
+
+#machine_submit_btn {
+  margin-top: 8px;
+}
