@@ -5,7 +5,7 @@ var dayCounter = 0;
 var officialBunnyTurnout = 0;
 
 var playerMoney = 1000;
-var moneyAtDayStart = 1000;   // snapshot before each day so Phase 2 can calc profit %
+var moneyAtDayStart = 1000;
 var bunnyMoney = 100;
 var maxBunnies = 5;
 var bunnyTries = 3;
@@ -25,6 +25,15 @@ var phase2Bet = 50;
 
 // 7 reel symbols
 const SYMBOLS = ["🍒", "🍋", "🍊", "🍇", "💎", "7️⃣", "⭐"];
+
+// White Rabbit messages
+const RABBIT_MESSAGES = [
+    "Well it seems you had your fun today, how about we have some more fun at your OWN games!",
+    "My bunny children have been afflicted for way too long, how about you have a go at the reason for their demise?!",
+    "Your greed and lack of morale impresses me, maybe we should try these games together!",
+    "Time is ticking, but I feel this casino needs to tick faster to its demise…oh, I have an idea!",
+    "An eye for an eye, a tooth for a tooth, and demise for greed, your clients have had enough!"
+];
 
 
 // ──────────────────────────────────────────────────────────
@@ -72,7 +81,7 @@ class Machine {
 
 
 // ──────────────────────────────────────────────────────────
-// Machine list init — Zone 1 (1-3) unlocked; 2 & 3 locked
+// Machine list init
 // ──────────────────────────────────────────────────────────
 var machineCount = 9;
 var zones = [true, false, false];
@@ -103,7 +112,6 @@ function pickSymbol() {
     return SYMBOLS[randInt(0, SYMBOLS.length - 1)];
 }
 
-// Returns 3 symbols guaranteed not all matching
 function pickLosingSymbols() {
     let s;
     do {
@@ -309,13 +317,74 @@ function spawnBunny(targetMachineIndex, totalDurationMs) {
 
 
 // ──────────────────────────────────────────────────────────
-// RUN THE DAY (Phase 1 → Phase 2)
+// WHITE RABBIT TRANSITION
+// Shows a visual-novel-style overlay between Phase 1 and 2.
+// Returns a Promise that resolves when the sequence is done.
+// ──────────────────────────────────────────────────────────
+function showWhiteRabbitTransition() {
+    return new Promise((resolve) => {
+        const message = RABBIT_MESSAGES[randInt(0, RABBIT_MESSAGES.length - 1)];
+
+        // Build overlay
+        const overlay = document.createElement("div");
+        overlay.id = "rabbitOverlay";
+        overlay.innerHTML = `
+            <div class="rabbit-dialogue-box">
+                <p class="rabbit-message" id="rabbitMessage">${message}</p>
+            </div>
+            <div class="rabbit-portrait-wrap" id="rabbitPortrait">
+                <img src="assets/Clockrabbit.png" alt="The Clock Rabbit" class="rabbit-portrait-img" />
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Play ghostly sound
+        const ghostSfx = new Audio("assets/sounds/ghostly-sound.mp3");
+        ghostSfx.volume = 0.75;
+        ghostSfx.play().catch(() => {});
+
+        // Fade in overlay
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                overlay.classList.add("rabbit-visible");
+            });
+        });
+
+        // After 500ms, slide rabbit portrait up from bottom
+        setTimeout(() => {
+            const portrait = document.getElementById("rabbitPortrait");
+            if (portrait) portrait.classList.add("rabbit-portrait-in");
+        }, 500);
+
+        // After 3.5s, fade message out, then slide rabbit away, then remove
+        setTimeout(() => {
+            const msgEl = document.getElementById("rabbitMessage");
+            if (msgEl) msgEl.classList.add("rabbit-msg-out");
+
+            setTimeout(() => {
+                const portrait = document.getElementById("rabbitPortrait");
+                if (portrait) portrait.classList.remove("rabbit-portrait-in");
+
+                setTimeout(() => {
+                    overlay.classList.remove("rabbit-visible");
+                    setTimeout(() => {
+                        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                        resolve();
+                    }, 600);
+                }, 500);
+            }, 500);
+        }, 3500);
+    });
+}
+
+
+// ──────────────────────────────────────────────────────────
+// RUN THE DAY (Phase 1 → White Rabbit → Phase 2)
 // ──────────────────────────────────────────────────────────
 function runDay() {
     if (dayRunning) return;
     dayRunning = true;
 
-    // Snapshot money before earnings so Phase 2 can calc profit %
     moneyAtDayStart = playerMoney;
 
     const DAY_MS = 15000;
@@ -371,12 +440,26 @@ function runDay() {
         const layer = document.getElementById("bunnyLayer");
         if (layer) layer.innerHTML = "";
 
-        setTimeout(() => {
-            document.getElementById("phase1").classList.add("hidden");
+        setTimeout(async () => {
             dayRunning = false;
             startBtn.disabled = false;
             dayCounter++;
 
+            // Check if player is already broke — skip straight to game over
+            const available = machineList.filter(m => m.getMachineAvail());
+            const canAffordMin = available.some(m => playerMoney >= m.getMinBet());
+
+            if (playerMoney <= 0 || !canAffordMin) {
+                document.getElementById("phase1").classList.add("hidden");
+                triggerGameOver();
+                return;
+            }
+
+            // Show the White Rabbit transition overlay
+            document.getElementById("phase1").classList.add("hidden");
+            await showWhiteRabbitTransition();
+
+            // Now enter Phase 2
             startPhase2();
         }, PAUSE_AFTER_MS);
     }, DAY_MS);
@@ -388,32 +471,26 @@ function runDay() {
 // ══════════════════════════════════════════════════════════
 
 function startPhase2() {
-    // Pick a random available machine to force the player onto
     const available = machineList.filter(m => m.getMachineAvail());
     if (available.length === 0) { triggerGameOver(); return; }
-    phase2Machine = available[randInt(0, available.length - 1)];
 
-    // ── Calculate required plays ─────────────────────────
-    // profit % = (playerMoney - moneyAtDayStart) / moneyAtDayStart
-    // plays = floor(maxAmountGamble * profitPct), minimum 1
+    // Pick only machines the player can afford
+    const affordable = available.filter(m => playerMoney >= m.getMinBet());
+    if (affordable.length === 0) { triggerGameOver(); return; }
+
+    phase2Machine = affordable[randInt(0, affordable.length - 1)];
+
+    // Required plays
     const profit = playerMoney - moneyAtDayStart;
     const profitPct = moneyAtDayStart > 0 ? (profit / moneyAtDayStart) : 0;
-    if (profitPct <= 0) {
-        phase2PlaysRequired = 1;
-    } else {
-        phase2PlaysRequired = Math.max(1, Math.floor(maxAmountGamble * profitPct));
-    }
+    phase2PlaysRequired = profitPct <= 0 ? 1 : Math.max(1, Math.floor(maxAmountGamble * profitPct));
     phase2PlaysLeft = phase2PlaysRequired;
 
-    // ── Starting bet ─────────────────────────────────────
-    // If minBet * 4 > playerMoney  →  use minBet
-    // otherwise                    →  use 20% of playerMoney
+    // Starting bet
     const minBet = phase2Machine.getMinBet();
-    if (minBet * 4 > playerMoney) {
-        phase2Bet = minBet;
-    } else {
-        phase2Bet = Math.floor(playerMoney * 0.2);
-    }
+    phase2Bet = (minBet * 4 > playerMoney)
+        ? minBet
+        : Math.floor(playerMoney * 0.2);
     phase2Bet = Math.max(phase2Bet, minBet);
 
     buildPhase2UI();
@@ -503,17 +580,14 @@ function executePhase2Spin() {
     bet = Math.max(minBet, Math.min(Math.floor(playerMoney), bet));
     betInput.value = bet;
 
-    // Last-minute bust check before deducting
     if (playerMoney < minBet) {
         setTimeout(() => triggerGameOver(), 300);
         return;
     }
 
-    // Deduct bet
     playerMoney -= bet;
     updateP2Money();
 
-    // Determine outcome
     const roll = rand100();
     const didWin = roll <= phase2Machine.getWinRate();
 
@@ -521,7 +595,6 @@ function executePhase2Spin() {
         ? (() => { const s = pickSymbol(); return [s, s, s]; })()
         : pickLosingSymbols();
 
-    // Reset reels to spinning state
     const reelIds = ["p2Reel0", "p2Reel1", "p2Reel2"];
     reelIds.forEach(id => {
         const el = document.getElementById(id);
@@ -529,7 +602,6 @@ function executePhase2Spin() {
         el.className = "p2-reel spinning";
     });
 
-    // Reveal each reel sequentially
     reelIds.forEach((id, i) => {
         setTimeout(() => {
             const el = document.getElementById(id);
@@ -539,7 +611,6 @@ function executePhase2Spin() {
         }, 700 + i * 600);
     });
 
-    // After all reels settle, apply result and update state
     setTimeout(() => {
         const resultEl = document.getElementById("p2ResultMsg");
 
@@ -565,13 +636,11 @@ function executePhase2Spin() {
 
         phase2Running = false;
 
-        // Check bust after result is applied
         if (playerMoney < minBet || playerMoney <= 0) {
             setTimeout(() => triggerGameOver(), 900);
             return;
         }
 
-        // All plays used up — survive another day
         if (phase2PlaysLeft <= 0) {
             resultEl.textContent += " — You survived!";
             playBtn.textContent = "Survive Another Day →";
@@ -580,7 +649,6 @@ function executePhase2Spin() {
             return;
         }
 
-        // Still plays to go
         playBtn.disabled = false;
     }, 3000);
 }
@@ -613,7 +681,6 @@ function triggerGameOver() {
         "You had your time, but your greed caught up to you.";
     document.getElementById("surviveTime").textContent = dayCounter;
 
-    // Create return button if it doesn't exist yet
     let homeBtn = document.getElementById("returnHomeBtn");
     if (!homeBtn) {
         homeBtn = document.createElement("button");
@@ -631,7 +698,6 @@ function triggerGameOver() {
 }
 
 function resetGame() {
-    // Reset runtime state; leave settings sliders untouched
     dayCounter = 0;
     officialBunnyTurnout = 0;
     playerMoney = 1000;
@@ -642,13 +708,11 @@ function resetGame() {
     phase2Machine = null;
     phase2Bet = 50;
 
-    // Reset zone unlock state
     zones = [true, false, false];
     for (let i = 0; i < machineList.length; i++) {
         machineList[i].setMachineAvail(i < 3);
     }
 
-    // Reset zone CSS
     const zone2 = document.getElementById("zone2");
     const zone3 = document.getElementById("zone3");
     if (zone2) zone2.classList.add("locked");
@@ -698,7 +762,6 @@ function initializeSliderOutputs() {
 // All event listeners
 // ──────────────────────────────────────────────────────────
 function initializeEventListeners() {
-    // Settings popup open
     document.getElementById("cheat_open_btn").addEventListener("click", () => {
         document.getElementById("cheatPopup").classList.remove("hidden");
         document.getElementById("cheat_playerMoney").value = playerMoney;
@@ -715,7 +778,6 @@ function initializeEventListeners() {
         });
     });
 
-    // Settings popup save
     document.getElementById("cheat_submit_btn").addEventListener("click", () => {
         document.getElementById("cheatPopup").classList.add("hidden");
         playerMoney       = parseInt(document.getElementById("cheat_playerMoney").value, 10);
@@ -728,7 +790,6 @@ function initializeEventListeners() {
         updateMoneyDisplay();
     });
 
-    // Play → Phase 1
     document.getElementById("play_btn").addEventListener("click", () => {
         document.getElementById("startMenu").classList.add("hidden");
         document.getElementById("cheatPopup").classList.add("hidden");
@@ -736,17 +797,14 @@ function initializeEventListeners() {
         updateMoneyDisplay();
     });
 
-    // Slot hitboxes
     for (let i = 1; i <= 9; i++) {
         const slot = document.getElementById("slot" + i);
         if (slot) slot.addEventListener("click", () => openSlotPopup(i));
     }
 
-    // Slot popup save
     const machineSubmitBtn = document.getElementById("machine_submit_btn");
     if (machineSubmitBtn) machineSubmitBtn.addEventListener("click", saveSlotPopup);
 
-    // Zone unlock buttons
     document.querySelectorAll(".zone-unlock-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -754,7 +812,7 @@ function initializeEventListeners() {
         });
     });
 
-    // Start Day button — audio fix applied
+    // Start Day — audio fix applied
     const startDayBtn = document.getElementById("startDayBtn");
     const startSfx    = document.getElementById("sfx_startGamble");
 
@@ -762,7 +820,6 @@ function initializeEventListeners() {
         startDayBtn.addEventListener("click", () => {
             startDayBtn.disabled = true;
 
-            // ✅ Play immediately in click handler (not inside setTimeout)
             if (startSfx) {
                 startSfx.currentTime = 0;
                 startSfx.volume = 0.7;
