@@ -338,10 +338,17 @@ function showWhiteRabbitTransition() {
         `;
         document.body.appendChild(overlay);
 
-        // Play ghostly sound
+        // Play ghostly ambient immediately
         const ghostSfx = new Audio("assets/sounds/ghostly-sound.mp3");
         ghostSfx.volume = 0.75;
         ghostSfx.play().catch(() => {});
+
+        // electric.mp3 fires when the rabbit slides in (500ms delay matches portrait-in)
+        setTimeout(() => {
+            const electricSfx = new Audio("assets/sounds/electric.mp3");
+            electricSfx.volume = 0.85;
+            electricSfx.play().catch(() => {});
+        }, 500);
 
         // Fade in overlay
         requestAnimationFrame(() => {
@@ -571,6 +578,11 @@ function executePhase2Spin() {
     if (phase2Running) return;
     phase2Running = true;
 
+    // Play lever sound immediately (must be in click handler call stack)
+    const electricSfx = new Audio("assets/sounds/electric.mp3");
+    electricSfx.volume = 0.8;
+    electricSfx.play().catch(err => console.warn("Electric SFX blocked:", err));
+
     const playBtn = document.getElementById("p2PlayBtn");
     playBtn.disabled = true;
 
@@ -608,7 +620,7 @@ function executePhase2Spin() {
             el.classList.remove("spinning");
             el.textContent = symbols[i];
             el.classList.add(didWin ? "reel-win" : "reel-lose");
-        }, 700 + i * 750);
+        }, 700 + i * 600);
     });
 
     setTimeout(() => {
@@ -637,7 +649,7 @@ function executePhase2Spin() {
         phase2Running = false;
 
         if (playerMoney < minBet || playerMoney <= 0) {
-            setTimeout(() => triggerGameOver(), 1500);
+            setTimeout(() => triggerGameOver(), 900);
             return;
         }
 
@@ -650,7 +662,7 @@ function executePhase2Spin() {
         }
 
         playBtn.disabled = false;
-    }, 5000);
+    }, 3000);
 }
 
 function updateP2Money() {

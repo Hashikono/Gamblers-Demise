@@ -1563,12 +1563,12 @@ h1.game-title {
     opacity: 1;
 }
 
-/* Dialogue text box — VN style */
+/* Dialogue text box — VN style, positioned well above the rabbit portrait */
 .rabbit-dialogue-box {
     position: absolute;
-    top: 50%;
+    top: 12%;
     left: 50%;
-    transform: translate(-50%, -60%);
+    transform: translateX(-50%);
     width: 80%;
     max-width: 640px;
     background: rgba(10, 5, 20, 0.88);
