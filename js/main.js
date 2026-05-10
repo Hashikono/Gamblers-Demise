@@ -5,6 +5,7 @@ var dayCounter = 0;
 var officialBunnyTurnout = 0;
 
 var playerMoney = 1000;
+var moneyAtDayStart = 1000;   // snapshot before each day so Phase 2 can calc profit %
 var bunnyMoney = 100;
 var maxBunnies = 5;
 var bunnyTries = 3;
@@ -12,11 +13,18 @@ var whiteRabbitChance = 100;
 var maxAmountGamble = 4;
 var percentageGain = 100;
 
-// Which slot is currently being edited
 var currentSlot = 1;
-
-// Day-run state
 var dayRunning = false;
+
+// Phase 2 state
+var phase2Running = false;
+var phase2PlaysRequired = 1;
+var phase2PlaysLeft = 1;
+var phase2Machine = null;
+var phase2Bet = 50;
+
+// 7 reel symbols
+const SYMBOLS = ["🍒", "🍋", "🍊", "🍇", "💎", "7️⃣", "⭐"];
 
 
 // ──────────────────────────────────────────────────────────
@@ -27,10 +35,10 @@ class Bunny {
         this.money = bunnyMoney;
         this.tries = bunnyTries;
     }
-    modMoney(amount) { this.money = this.money + amount; }
+    modMoney(amount) { this.money += amount; }
     setMoney(amount) { this.money = amount; }
     getMoney() { return this.money; }
-    modTrial(amount) { this.tries = this.tries + amount; }
+    modTrial(amount) { this.tries += amount; }
     setTrial(amount) { this.tries = amount; }
     getTrial() { return this.tries; }
 }
@@ -48,33 +56,31 @@ class Machine {
         this.minBet = 50;
         this.override = false;
     }
-    setMachineNum(v) { this.machineNum = v; }
-    getMachineNum()  { return this.machineNum; }
+    setMachineNum(v)   { this.machineNum = v; }
+    getMachineNum()    { return this.machineNum; }
     setMachineAvail(v) { this.machineAvail = v; }
     getMachineAvail()  { return this.machineAvail; }
-    setWinRate(v) { this.winRate = v; }
-    getWinRate()  { return this.winRate; }
-    setPayout(v) { this.payout = v; }
-    getPayout()  { return this.payout; }
-    setMinBet(v) { this.minBet = v; }
-    getMinBet()  { return this.minBet; }
+    setWinRate(v)  { this.winRate = v; }
+    getWinRate()   { return this.winRate; }
+    setPayout(v)   { this.payout = v; }
+    getPayout()    { return this.payout; }
+    setMinBet(v)   { this.minBet = v; }
+    getMinBet()    { return this.minBet; }
     setOverride(v) { this.override = v; }
     getOverride()  { return this.override; }
 }
 
 
 // ──────────────────────────────────────────────────────────
-// Machine list initialization
-// Zone 1 (slots 1-3) unlocked by default; Zone 2 (4-6), Zone 3 (7-9) locked
+// Machine list init — Zone 1 (1-3) unlocked; 2 & 3 locked
 // ──────────────────────────────────────────────────────────
 var machineCount = 9;
-var zones = [true, false, false]; // zone unlock state
+var zones = [true, false, false];
 var machineList = [];
 
 for (let i = 0; i < machineCount; i++) {
     machineList.push(new Machine(i + 1, false));
 }
-// Initial availability: only zone 1 machines (slots 1-3)
 for (let i = 0; i < 3; i++) {
     machineList[i].setMachineAvail(true);
 }
@@ -93,9 +99,22 @@ function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function pickSymbol() {
+    return SYMBOLS[randInt(0, SYMBOLS.length - 1)];
+}
+
+// Returns 3 symbols guaranteed not all matching
+function pickLosingSymbols() {
+    let s;
+    do {
+        s = [pickSymbol(), pickSymbol(), pickSymbol()];
+    } while (s[0] === s[1] && s[1] === s[2]);
+    return s;
+}
+
 
 // ──────────────────────────────────────────────────────────
-// Machine calculation
+// Machine calculation (day earnings)
 // ──────────────────────────────────────────────────────────
 function machineCalc(mach) {
     if (!mach.getMachineAvail()) return [];
@@ -155,7 +174,6 @@ function machineCalc(mach) {
                 }
             }
         }
-
         bunnyList.push(earnings * (percentageGain / 100));
     }
 
@@ -178,7 +196,7 @@ function updateBunnyCount(visited, max) {
 
 
 // ──────────────────────────────────────────────────────────
-// ZONE UNLOCK ($2000 buttons)
+// ZONE UNLOCK
 // ──────────────────────────────────────────────────────────
 function unlockZone(zoneNum) {
     const cost = 2000;
@@ -192,34 +210,22 @@ function unlockZone(zoneNum) {
 
     if (zoneNum === 2) {
         zones[1] = true;
-        // Unlock slot machines 4, 5, 6
         machineList[3].setMachineAvail(true);
         machineList[4].setMachineAvail(true);
         machineList[5].setMachineAvail(true);
-
-        const zone2 = document.getElementById("zone2");
-        zone2.classList.remove("locked");
-
-        // Once zone 2 is unlocked, zone 3 becomes available to purchase
-        const zone3 = document.getElementById("zone3");
-        zone3.classList.remove("zone3-disabled");
-
+        document.getElementById("zone2").classList.remove("locked");
+        document.getElementById("zone3").classList.remove("zone3-disabled");
     } else if (zoneNum === 3) {
-        // Zone 3 can only unlock if zone 2 is already unlocked
         if (!zones[1]) {
-            console.log("Must unlock zone 2 first");
-            playerMoney += cost; // refund
+            playerMoney += cost;
             updateMoneyDisplay();
             return false;
         }
-
         zones[2] = true;
         machineList[6].setMachineAvail(true);
         machineList[7].setMachineAvail(true);
         machineList[8].setMachineAvail(true);
-
-        const zone3 = document.getElementById("zone3");
-        zone3.classList.remove("locked");
+        document.getElementById("zone3").classList.remove("locked");
     }
 
     return true;
@@ -227,13 +233,11 @@ function unlockZone(zoneNum) {
 
 
 // ──────────────────────────────────────────────────────────
-// SLOT POPUP
+// SLOT POPUP (Phase 1)
 // ──────────────────────────────────────────────────────────
 function openSlotPopup(slotNum) {
     currentSlot = slotNum;
     const m = machineList[slotNum - 1];
-
-    // Don't open popup for locked machines
     if (!m.getMachineAvail()) return;
 
     document.getElementById("machineTargetLabel").textContent = slotNum;
@@ -264,14 +268,11 @@ function saveSlotPopup() {
 
 // ──────────────────────────────────────────────────────────
 // BUNNY ROAMING ANIMATION
-// Spawns a bunny element, walks it to a random slot machine,
-// pauses there, then walks it off-screen and removes it.
 // ──────────────────────────────────────────────────────────
 function spawnBunny(targetMachineIndex, totalDurationMs) {
     const floor = document.getElementById("casinoFloor");
     const bunnyLayer = document.getElementById("bunnyLayer");
 
-    // Get target slot machine element's position relative to floor
     const targetEl = document.querySelector(`.slotMachine[data-slot="${targetMachineIndex + 1}"]`);
     if (!targetEl) return;
 
@@ -280,32 +281,27 @@ function spawnBunny(targetMachineIndex, totalDurationMs) {
     const targetX = targetRect.left - floorRect.left + targetRect.width / 2 - 16;
     const targetY = targetRect.top - floorRect.top + targetRect.height / 2 - 16;
 
-    // Create bunny element
     const bunny = document.createElement("img");
     bunny.src = "assets/bunny.svg";
     bunny.className = "bunny walking";
-    bunny.style.left = (floor.clientWidth / 2 - 16) + "px";  // start at entrance (center bottom)
+    bunny.style.left = (floor.clientWidth / 2 - 16) + "px";
     bunny.style.top = (floor.clientHeight - 30) + "px";
     bunny.style.setProperty('--dir', '0deg');
     bunnyLayer.appendChild(bunny);
 
-    // Walk to slot machine after a brief delay
     setTimeout(() => {
         bunny.style.left = targetX + "px";
         bunny.style.top = targetY + "px";
     }, 50);
 
-    // Pause at machine, then leave
     const walkTime = 1500;
     const stayTime = totalDurationMs - walkTime - 1500;
 
     setTimeout(() => {
-        // Walk back out the entrance
         bunny.style.left = (floor.clientWidth / 2 - 16) + "px";
         bunny.style.top = (floor.clientHeight + 40) + "px";
     }, walkTime + Math.max(stayTime, 200));
 
-    // Remove bunny from DOM
     setTimeout(() => {
         if (bunny.parentNode) bunny.parentNode.removeChild(bunny);
     }, totalDurationMs);
@@ -313,30 +309,24 @@ function spawnBunny(targetMachineIndex, totalDurationMs) {
 
 
 // ──────────────────────────────────────────────────────────
-// RUN THE DAY
-// 15 seconds total. During this window:
-//   - Calculate earnings from all unlocked/available machines
-//   - Flatten the earnings list, distribute payouts periodically
-//   - Spawn 10 random bunnies that roam to slot machines
-//   - Update the bunny counter live
-//   - At 15s end, wait 2s, then switch to phase 2
+// RUN THE DAY (Phase 1 → Phase 2)
 // ──────────────────────────────────────────────────────────
 function runDay() {
     if (dayRunning) return;
     dayRunning = true;
 
+    // Snapshot money before earnings so Phase 2 can calc profit %
+    moneyAtDayStart = playerMoney;
+
     const DAY_MS = 15000;
     const PAUSE_AFTER_MS = 2000;
     const TOTAL_BUNNIES = 10;
 
-    // Disable Start Day button during the day
     const startBtn = document.getElementById("startDayBtn");
     startBtn.disabled = true;
 
-    // Reset bunny turnout for this day
     officialBunnyTurnout = 0;
 
-    // 1) Calculate earnings list from all available machines
     let allEarnings = [];
     for (let i = 0; i < machineList.length; i++) {
         if (machineList[i].getMachineAvail()) {
@@ -347,13 +337,10 @@ function runDay() {
         }
     }
 
-    // Set up the HUD - max possible visitors = maxBunnies * (available machines)
     const availableMachineCount = machineList.filter(m => m.getMachineAvail()).length;
     const maxPossibleBunnies = maxBunnies * availableMachineCount;
     updateBunnyCount(0, maxPossibleBunnies);
 
-    // 2) Schedule periodic earnings payouts spread across the day
-    // We want every earning value to be applied by the end
     if (allEarnings.length > 0) {
         const payoutInterval = DAY_MS / allEarnings.length;
         allEarnings.forEach((amount, idx) => {
@@ -364,8 +351,6 @@ function runDay() {
         });
     }
 
-    // 3) Spawn 10 roaming bunnies across the 15 seconds
-    // Pick random available machines as targets
     const availableMachineIndices = [];
     for (let i = 0; i < machineList.length; i++) {
         if (machineList[i].getMachineAvail()) availableMachineIndices.push(i);
@@ -373,7 +358,6 @@ function runDay() {
 
     let bunniesVisited = 0;
     for (let b = 0; b < TOTAL_BUNNIES; b++) {
-        // Stagger spawns through the first ~12 seconds, so they have time to leave
         const spawnDelay = (DAY_MS - 3000) * (b / TOTAL_BUNNIES) + randInt(0, 400);
         setTimeout(() => {
             const target = availableMachineIndices[randInt(0, availableMachineIndices.length - 1)];
@@ -383,25 +367,294 @@ function runDay() {
         }, spawnDelay);
     }
 
-    // 4) End of day → 2 second pause → switch to phase 2
     setTimeout(() => {
-        // Clean up any straggler bunnies
         const layer = document.getElementById("bunnyLayer");
         if (layer) layer.innerHTML = "";
 
         setTimeout(() => {
             document.getElementById("phase1").classList.add("hidden");
-            document.getElementById("phase2").classList.remove("hidden");
-
-            // Sync phase 2 money display if it exists
-            const phase2Money = document.getElementById("money");
-            if (phase2Money) phase2Money.textContent = Math.round(playerMoney);
-
             dayRunning = false;
             startBtn.disabled = false;
             dayCounter++;
+
+            startPhase2();
         }, PAUSE_AFTER_MS);
     }, DAY_MS);
+}
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 2 — REVERSAL (Victim Mode)
+// ══════════════════════════════════════════════════════════
+
+function startPhase2() {
+    // Pick a random available machine to force the player onto
+    const available = machineList.filter(m => m.getMachineAvail());
+    if (available.length === 0) { triggerGameOver(); return; }
+    phase2Machine = available[randInt(0, available.length - 1)];
+
+    // ── Calculate required plays ─────────────────────────
+    // profit % = (playerMoney - moneyAtDayStart) / moneyAtDayStart
+    // plays = floor(maxAmountGamble * profitPct), minimum 1
+    const profit = playerMoney - moneyAtDayStart;
+    const profitPct = moneyAtDayStart > 0 ? (profit / moneyAtDayStart) : 0;
+    if (profitPct <= 0) {
+        phase2PlaysRequired = 1;
+    } else {
+        phase2PlaysRequired = Math.max(1, Math.floor(maxAmountGamble * profitPct));
+    }
+    phase2PlaysLeft = phase2PlaysRequired;
+
+    // ── Starting bet ─────────────────────────────────────
+    // If minBet * 4 > playerMoney  →  use minBet
+    // otherwise                    →  use 20% of playerMoney
+    const minBet = phase2Machine.getMinBet();
+    if (minBet * 4 > playerMoney) {
+        phase2Bet = minBet;
+    } else {
+        phase2Bet = Math.floor(playerMoney * 0.2);
+    }
+    phase2Bet = Math.max(phase2Bet, minBet);
+
+    buildPhase2UI();
+    document.getElementById("phase2").classList.remove("hidden");
+}
+
+function buildPhase2UI() {
+    const phase2 = document.getElementById("phase2");
+    phase2.innerHTML = `
+        <div class="phase-label">Phase 2 — Reversal</div>
+
+        <div class="p2-info-row">
+            <div class="p2-info-card">
+                <span class="p2-info-label">Machine</span>
+                <span class="p2-info-val" id="p2MachineNum">#${phase2Machine.getMachineNum()}</span>
+            </div>
+            <div class="p2-info-card">
+                <span class="p2-info-label">Balance</span>
+                <span class="p2-info-val" id="p2Money">$${Math.round(playerMoney)}</span>
+            </div>
+            <div class="p2-info-card">
+                <span class="p2-info-label">Plays Left</span>
+                <span class="p2-info-val" id="p2PlaysLeft">${phase2PlaysLeft} / ${phase2PlaysRequired}</span>
+            </div>
+            <div class="p2-info-card">
+                <span class="p2-info-label">Win Rate</span>
+                <span class="p2-info-val">${phase2Machine.getWinRate()}%</span>
+            </div>
+            <div class="p2-info-card">
+                <span class="p2-info-label">Payout</span>
+                <span class="p2-info-val">${phase2Machine.getPayout()}×</span>
+            </div>
+        </div>
+
+        <div class="p2-bet-row">
+            <label class="p2-bet-label" for="p2BetInput">
+                Your Bet &nbsp;—&nbsp; Min: $${phase2Machine.getMinBet()}
+            </label>
+            <div class="p2-bet-controls">
+                <button class="p2-bet-adj" id="p2BetDown">−</button>
+                <input type="number"
+                    id="p2BetInput"
+                    class="p2-bet-input"
+                    value="${Math.round(phase2Bet)}"
+                    min="${phase2Machine.getMinBet()}"
+                    step="${phase2Machine.getMinBet()}" />
+                <button class="p2-bet-adj" id="p2BetUp">+</button>
+            </div>
+        </div>
+
+        <div class="p2-reels" id="p2Reels">
+            <div class="p2-reel" id="p2Reel0">?</div>
+            <div class="p2-reel" id="p2Reel1">?</div>
+            <div class="p2-reel" id="p2Reel2">?</div>
+        </div>
+
+        <div class="p2-result-msg" id="p2ResultMsg"></div>
+
+        <button class="menu-btn p2-play-btn" id="p2PlayBtn">PULL LEVER</button>
+    `;
+
+    const minBet = phase2Machine.getMinBet();
+
+    document.getElementById("p2BetDown").addEventListener("click", () => {
+        const inp = document.getElementById("p2BetInput");
+        inp.value = Math.max(minBet, parseInt(inp.value, 10) - minBet);
+    });
+
+    document.getElementById("p2BetUp").addEventListener("click", () => {
+        const inp = document.getElementById("p2BetInput");
+        inp.value = Math.min(Math.floor(playerMoney), parseInt(inp.value, 10) + minBet);
+    });
+
+    document.getElementById("p2PlayBtn").addEventListener("click", executePhase2Spin);
+}
+
+function executePhase2Spin() {
+    if (phase2Running) return;
+    phase2Running = true;
+
+    const playBtn = document.getElementById("p2PlayBtn");
+    playBtn.disabled = true;
+
+    const minBet = phase2Machine.getMinBet();
+    const betInput = document.getElementById("p2BetInput");
+    let bet = parseInt(betInput.value, 10);
+    bet = Math.max(minBet, Math.min(Math.floor(playerMoney), bet));
+    betInput.value = bet;
+
+    // Last-minute bust check before deducting
+    if (playerMoney < minBet) {
+        setTimeout(() => triggerGameOver(), 300);
+        return;
+    }
+
+    // Deduct bet
+    playerMoney -= bet;
+    updateP2Money();
+
+    // Determine outcome
+    const roll = rand100();
+    const didWin = roll <= phase2Machine.getWinRate();
+
+    const symbols = didWin
+        ? (() => { const s = pickSymbol(); return [s, s, s]; })()
+        : pickLosingSymbols();
+
+    // Reset reels to spinning state
+    const reelIds = ["p2Reel0", "p2Reel1", "p2Reel2"];
+    reelIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = "?";
+        el.className = "p2-reel spinning";
+    });
+
+    // Reveal each reel sequentially
+    reelIds.forEach((id, i) => {
+        setTimeout(() => {
+            const el = document.getElementById(id);
+            el.classList.remove("spinning");
+            el.textContent = symbols[i];
+            el.classList.add(didWin ? "reel-win" : "reel-lose");
+        }, 700 + i * 600);
+    });
+
+    // After all reels settle, apply result and update state
+    setTimeout(() => {
+        const resultEl = document.getElementById("p2ResultMsg");
+
+        if (didWin) {
+            const winnings = bet * phase2Machine.getPayout();
+            playerMoney += winnings;
+            const net = Math.round(winnings - bet);
+            resultEl.textContent = `WIN! +$${net}`;
+            resultEl.className = "p2-result-msg p2-win";
+        } else {
+            resultEl.textContent = `LOSS. −$${Math.round(bet)}`;
+            resultEl.className = "p2-result-msg p2-loss";
+        }
+
+        reelIds.forEach(id => {
+            document.getElementById(id).classList.remove("reel-win", "reel-lose");
+        });
+
+        phase2PlaysLeft--;
+        updateP2Money();
+        document.getElementById("p2PlaysLeft").textContent =
+            `${phase2PlaysLeft} / ${phase2PlaysRequired}`;
+
+        phase2Running = false;
+
+        // Check bust after result is applied
+        if (playerMoney < minBet || playerMoney <= 0) {
+            setTimeout(() => triggerGameOver(), 900);
+            return;
+        }
+
+        // All plays used up — survive another day
+        if (phase2PlaysLeft <= 0) {
+            resultEl.textContent += " — You survived!";
+            playBtn.textContent = "Survive Another Day →";
+            playBtn.disabled = false;
+            playBtn.addEventListener("click", returnToPhase1, { once: true });
+            return;
+        }
+
+        // Still plays to go
+        playBtn.disabled = false;
+    }, 3000);
+}
+
+function updateP2Money() {
+    const el = document.getElementById("p2Money");
+    if (el) el.textContent = "$" + Math.round(playerMoney);
+    updateMoneyDisplay();
+}
+
+function returnToPhase1() {
+    document.getElementById("phase2").classList.add("hidden");
+    updateMoneyDisplay();
+    document.getElementById("phase1").classList.remove("hidden");
+}
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 3 — GAME OVER
+// ══════════════════════════════════════════════════════════
+
+function triggerGameOver() {
+    document.getElementById("phase1").classList.add("hidden");
+    document.getElementById("phase2").classList.add("hidden");
+
+    const phase3 = document.getElementById("phase3");
+    phase3.classList.remove("hidden");
+
+    document.getElementById("endMessage").textContent =
+        "You had your time, but your greed caught up to you.";
+    document.getElementById("surviveTime").textContent = dayCounter;
+
+    // Create return button if it doesn't exist yet
+    let homeBtn = document.getElementById("returnHomeBtn");
+    if (!homeBtn) {
+        homeBtn = document.createElement("button");
+        homeBtn.id = "returnHomeBtn";
+        homeBtn.className = "menu-btn";
+        homeBtn.textContent = "Return to Home";
+        phase3.appendChild(homeBtn);
+    }
+
+    homeBtn.onclick = () => {
+        resetGame();
+        phase3.classList.add("hidden");
+        document.getElementById("startMenu").classList.remove("hidden");
+    };
+}
+
+function resetGame() {
+    // Reset runtime state; leave settings sliders untouched
+    dayCounter = 0;
+    officialBunnyTurnout = 0;
+    playerMoney = 1000;
+    moneyAtDayStart = 1000;
+    phase2Running = false;
+    phase2PlaysRequired = 1;
+    phase2PlaysLeft = 1;
+    phase2Machine = null;
+    phase2Bet = 50;
+
+    // Reset zone unlock state
+    zones = [true, false, false];
+    for (let i = 0; i < machineList.length; i++) {
+        machineList[i].setMachineAvail(i < 3);
+    }
+
+    // Reset zone CSS
+    const zone2 = document.getElementById("zone2");
+    const zone3 = document.getElementById("zone3");
+    if (zone2) zone2.classList.add("locked");
+    if (zone3) { zone3.classList.add("locked"); zone3.classList.add("zone3-disabled"); }
+
+    updateMoneyDisplay();
 }
 
 
@@ -445,7 +698,7 @@ function initializeSliderOutputs() {
 // All event listeners
 // ──────────────────────────────────────────────────────────
 function initializeEventListeners() {
-    // Cheat popup open
+    // Settings popup open
     document.getElementById("cheat_open_btn").addEventListener("click", () => {
         document.getElementById("cheatPopup").classList.remove("hidden");
         document.getElementById("cheat_playerMoney").value = playerMoney;
@@ -458,14 +711,11 @@ function initializeEventListeners() {
 
         document.querySelectorAll('#cheatPopup input[type="range"]').forEach(slider => {
             const out = document.querySelector(`output[for="${slider.id}"]`);
-            if (out) {
-                out.value = slider.value;
-                out.textContent = slider.value;
-            }
+            if (out) { out.value = slider.value; out.textContent = slider.value; }
         });
     });
 
-    // Cheat popup submit
+    // Settings popup save
     document.getElementById("cheat_submit_btn").addEventListener("click", () => {
         document.getElementById("cheatPopup").classList.add("hidden");
         playerMoney       = parseInt(document.getElementById("cheat_playerMoney").value, 10);
@@ -478,7 +728,7 @@ function initializeEventListeners() {
         updateMoneyDisplay();
     });
 
-    // Play button → enter Phase 1
+    // Play → Phase 1
     document.getElementById("play_btn").addEventListener("click", () => {
         document.getElementById("startMenu").classList.add("hidden");
         document.getElementById("cheatPopup").classList.add("hidden");
@@ -486,33 +736,41 @@ function initializeEventListeners() {
         updateMoneyDisplay();
     });
 
-    // Slot hitboxes — open settings (only if machine available)
+    // Slot hitboxes
     for (let i = 1; i <= 9; i++) {
         const slot = document.getElementById("slot" + i);
-        if (slot) {
-            slot.addEventListener("click", () => openSlotPopup(i));
-        }
+        if (slot) slot.addEventListener("click", () => openSlotPopup(i));
     }
 
-    // Slot popup submit
+    // Slot popup save
     const machineSubmitBtn = document.getElementById("machine_submit_btn");
-    if (machineSubmitBtn) {
-        machineSubmitBtn.addEventListener("click", saveSlotPopup);
-    }
+    if (machineSubmitBtn) machineSubmitBtn.addEventListener("click", saveSlotPopup);
 
     // Zone unlock buttons
     document.querySelectorAll(".zone-unlock-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            const zone = parseInt(btn.dataset.zone, 10);
-            unlockZone(zone);
+            unlockZone(parseInt(btn.dataset.zone, 10));
         });
     });
 
-    // Start Day button
+    // Start Day button — audio fix applied
     const startDayBtn = document.getElementById("startDayBtn");
+    const startSfx    = document.getElementById("sfx_startGamble");
+
     if (startDayBtn) {
-        startDayBtn.addEventListener("click", runDay);
+        startDayBtn.addEventListener("click", () => {
+            startDayBtn.disabled = true;
+
+            // ✅ Play immediately in click handler (not inside setTimeout)
+            if (startSfx) {
+                startSfx.currentTime = 0;
+                startSfx.volume = 0.7;
+                startSfx.play().catch(err => console.warn("Audio blocked:", err));
+            }
+
+            setTimeout(() => { runDay(); }, 1200);
+        });
     }
 }
 
