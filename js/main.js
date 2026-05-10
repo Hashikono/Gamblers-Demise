@@ -139,38 +139,41 @@ function machineCalc(mach){
             //individual bunny earnings
             let earnings = 0;
             let currentBunny = new Bunny();
-
-            function earningCalcShort(){
-                return mach.getMinBet()*mach.getPayout();
-            }
-
+            currentBet = mach.getMinBet();
             //trials for each bunny
             for (let t = 0; t < bunnyTries; t++){
                 //if they still have money to bet on the machine
-                if (currentBunny.getMoney() >= mach.getMinBet()){
+                if (currentBunny.getMoney() >= currentBet()){ //can continue with increased bet
                     //If they win
                     let winNum = rand100();
-                    currentBunny.modMoney(-mach.getMinBet());
-                    earings += mach.getMinBet();
+                    currentBunny.modMoney(-currentBet);
+                    earnings += currentBet;
 
                     if (mach.getOverride() && winNum <= 10){ //overriding
-                            earnings += currentBunny.getMoney();
-                            currentBunny.setMoney(0);
-                        } else {
-                            earnings += earningCalcShort;
-                            currentBunny.modMoney(-earningCalcShort);
-                        }
+                        currentBet = mach.getMinBet();
                     } else if (winNum <= mach.getWinRate()){ //actual win
-                        earnings -= earningCalcShort;
-                        currentBunny.modMoney(earningCalcShort);
+                        earnings -= currentBet*mach.getPayout();
+                        currentBunny.modMoney(currentBet*mach.getPayout());
+                        currentBet += currentBunny.getMoney()*0.1; //current bet may add 10%
                     } else { //actual loss
-                        if (currentBunny.getMoney() - earningCalcShort < 0){
-                            earnings += currentBunny.getMoney();
-                            currentBunny.setMoney(0);
-                        } else {
-                            earnings += earningCalcShort;
-                            currentBunny.modMoney(-earningCalcShort);
-                        }
+                        currentBet = mach.getMinBet();
+                    }
+                } 
+                else if (currentBunny.getMoney() >= mach.getMinBet){ //returns back to original bet
+                    currentBet = mach.getMinBet();
+                    //If they win
+                    let winNum = rand100();
+                    currentBunny.modMoney(-currentBet);
+                    earnings += currentBet;
+
+                    if (mach.getOverride() && winNum <= 10){ //overriding
+                        currentBet = mach.getMinBet();
+                    } else if (winNum <= mach.getWinRate()){ //actual win
+                        earnings -= currentBet*mach.getPayout();
+                        currentBunny.modMoney(currentBet*mach.getPayout());
+                        currentBet += currentBunny.getMoney()*0.1; //current bet may add 10%
+                    } else { //actual loss
+                        currentBet = mach.getMinBet();
                     }
                 }
             }
