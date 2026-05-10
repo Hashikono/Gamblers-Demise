@@ -186,7 +186,13 @@ function machineCalc(mach){
 }
 
 // ---------- Implementation ----------
-//Initial phase
+window.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('startMenu').classList.remove("hidden");
+    document.getElementById('cheatPopup').classList.add("hidden");
+    document.getElementById('phase1').classList.add("phase hidden");
+    document.getElementById('phase2').classList.add("phase hidden");
+    document.getElementById('phase3').classList.add("phase hidden");
+});
 
 //Cheat opening
 const cheatOpenBtn = document.getElementById("cheat_open_btn");
@@ -226,7 +232,7 @@ playBtn.addEventListener("click", () => {
     //div management
     document.getElementById('startMenu').classList.add("hidden");
     document.getElementById('cheatPopup').classList.add("hidden");
-    document.getElementById('phase1').classList.remove("hidden");
+    document.getElementById('phase1').classList.remove("phase hidden");
 
     //FIXME: BEGINS PHASE 1 (BEFORE START DAY)
     console.log(machineList);
