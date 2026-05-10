@@ -191,12 +191,25 @@ function machineCalc(mach){
 //Cheat opening
 const cheatOpenBtn = document.getElementById("cheat_open_btn");
 cheatOpenBtn.addEventListener("click", () => {
+    //div management
+    document.getElementById('cheatPopup').classList.remove("hidden");
+
+    document.getElementById("cheat_playerMoney").value = playerMoney; 
+    document.getElementById("cheat_bunnyMoney").value = bunnyMoney; 
+    document.getElementById("cheat_maxBunnies").value = maxBunnies; 
+    document.getElementById("cheat_maxTries").value = bunnyTries; 
+    document.getElementById("cheat_whiteRabbitChance").value = whiteRabbitChance; 
+    document.getElementById("cheat_playerTries").value = maxAmountGamble; 
+    document.getElementById("cheat_gainPercent").value = percentageGain; 
     //FIXME: OPENS POPUP OF CHEAT MENU
 });
 
 //Cheat submission
 const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
 cheatSubmitBtn.addEventListener("click", () => {
+    //div management
+    document.getElementById('cheatPopup').classList.add("hidden");
+
     playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
     bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
     maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
@@ -210,17 +223,15 @@ cheatSubmitBtn.addEventListener("click", () => {
 //Play button (initilization)
 const playBtn = document.getElementById("play_btn");
 playBtn.addEventListener("click", () => {
+    //div management
+    document.getElementById('startMenu').classList.add("hidden");
+    document.getElementById('cheatPopup').classList.add("hidden");
+    document.getElementById('phase1').classList.remove("hidden");
+
     //FIXME: BEGINS PHASE 1 (BEFORE START DAY)
-    
+    console.log(machineList);
 });
 
-cheat_playerMoney
-cheat_bunnyMoney
-cheat_maxBunnies
-cheat_maxTries
-cheat_whiteRabbitChance
-cheat_playerTries
-cheat_gainPercent
 
 
 
