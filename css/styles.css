@@ -557,6 +557,13 @@ h1.game-title {
   color: var(--muted);
 }
 
+#phase_hidden{
+
+display: none;
+
+}
+
+
 #surviveTime {
   font-size: 2rem;
   font-weight: bold;
