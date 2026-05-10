@@ -272,13 +272,27 @@ function initializeSliderOutputs() {
     }
 }
 
-
+var currentSlot = 1;
 //regular events and buttons
 function initializeEventListeners() {
     const cheatOpenBtn = document.getElementById("cheat_open_btn");
     const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
     const playBtn = document.getElementById("play_btn");
+    const runDayBtn = document.getElementById("run_day_btn");
+
+    const machine1 = document.getElementById("slot1");
+    const machine2 = document.getElementById("slot2");
+    const machine3 = document.getElementById("slot3");
+    const machine4 = document.getElementById("slot4");
+    const machine5 = document.getElementById("slot5");
+    const machine6 = document.getElementById("slot6");
+    const machine7 = document.getElementById("slot7");
+    const machine8 = document.getElementById("slot8");
+    const machine9 = document.getElementById("slot9");
+
+    const machineSubmitBtn= document.getElementById("machine_submit_button")
     
+    //Setting open button
     if (cheatOpenBtn) {
         cheatOpenBtn.addEventListener("click", () => {
             document.getElementById('cheatPopup').classList.remove("hidden");
@@ -292,6 +306,7 @@ function initializeEventListeners() {
         });
     }
     
+    //setting submission
     if (cheatSubmitBtn) {
         cheatSubmitBtn.addEventListener("click", () => {
             document.getElementById('cheatPopup').classList.add("hidden");
@@ -305,6 +320,128 @@ function initializeEventListeners() {
         });
     }
     
+    //Casino parameter edits
+    // Machine 1
+    if (machine1) {
+        machine1.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 1;
+        });
+    }
+
+    // Machine 2
+    if (machine2) {
+        machine2.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 2;
+        });
+    }
+
+    // Machine 3
+    if (machine3) {
+        machine3.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 3;
+        });
+    }
+
+    // Machine 4
+    if (machine4) {
+        machine4.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 4;
+        });
+    }
+
+    // Machine 5
+    if (machine5) {
+        machine5.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 5;
+        });
+    }
+
+    // Machine 6
+    if (machine6) {
+        machine6.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 6;
+        });
+    }
+
+    // Machine 7
+    if (machine7) {
+        machine7.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 7;
+        });
+    }
+
+    // Machine 8
+    if (machine8) {
+        machine8.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 8;
+        });
+    }
+
+    // Machine 9
+    if (machine9) {
+        machine9.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.remove("hidden");
+            currentSlot = 9;
+        });
+    }
+    
+    //machine parameter submission
+    if (machineSubmitBtn) {
+        machineSubmitBtn.addEventListener("click", () => {
+            document.getElementById('machinePopup').classList.add("hidden");
+            machineList[currentSlot-1].setWinRate() = parseInt(document.getElementById("parameter_winRate").value, 10);
+
+            //machineNum() | machineAvail() | winRate() | payout() | minBet() | override()
+             /*//stores machines
+            var machineCount = 9; //Must hard code this
+            var machineList = []; //will be filled in the next section
+            //initialize available machines
+            for (let i = 0; i < machineCount; i++){
+                machineList.push(new Machine(i+1, false));
+            }
+            for (let i = 0; i < machineCount/zones.length; i++){
+                machineList[i].setMachineAvail(true);
+            } */
+
+            playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
+            bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
+            maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
+            bunnyTries = parseInt(document.getElementById("cheat_maxTries").value, 10);
+            whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
+            maxAmountGamble = parseInt(document.getElementById("cheat_playerTries").value, 10);
+            percentageGain = parseInt(document.getElementById("cheat_gainPercent").value, 10);
+        });
+    }
+
+    /*<!-- Win Rate (0-100%, increments of 5%) -->
+<input type="range" id="parameter_winRate" min="0" max="100" step="5" value="50">
+
+<!-- Payout Multiplier (1x, 1.5x, 2x, 2.5x, 3x) -->
+<select id="parameter_payout">
+  <option value="1">1x</option>
+  <option value="1.5">1.5x</option>
+  <option value="2">2x</option>
+  <option value="2.5">2.5x</option>
+  <option value="3">3x</option>
+</select>
+
+<!-- Minimum Bet (0-100, steps of 5) -->
+<input type="range" id="parameter_minBet" min="0" max="100" step="5" value="30">
+
+<!-- Override Win Rate (0-100%, chance to override round with 0% win rate) -->
+<input type="range" id="parameter_override" min="0" max="1" step="1" value="0">
+*/
+
+    
+    //play button (just moves to the next screen)
     if (playBtn) {
         playBtn.addEventListener("click", () => {
             document.getElementById('startMenu').classList.add("hidden");
@@ -314,6 +451,27 @@ function initializeEventListeners() {
             //console.log(playerMoney);
         });
     }
+
+    //Running the day
+    if (runDayBtn) {
+        runDayBtn.addEventListener("click", () => {
+            for()
+
+            /*//stores machines
+            var machineCount = 9; //Must hard code this
+            var zones = [true,false,false]; //zones available
+            var machineList = []; //will be filled in the next section
+            //initialize available machines
+            for (let i = 0; i < machineCount; i++){
+                machineList.push(new Machine(i+1, false));
+            }
+            for (let i = 0; i < machineCount/zones.length; i++){
+                machineList[i].setMachineAvail(true);
+            } */
+        });
+    }
+    
+
 }
 
 
