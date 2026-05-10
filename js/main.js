@@ -76,9 +76,10 @@ function machineCalc(mach){
     //mach = machine object
     //percentage chance of bunnies to come
     let attraction = 0;
+    //Amount of bunnies that actually show up
     let bunnyTurnout = 0;
-    let winningNum = rand100();
-    
+    //list of winning bunnies
+    let bunnyList = [];
 
     //payout weight consideration
     const pay = parseFloat(mach.getPayout());
@@ -99,8 +100,19 @@ function machineCalc(mach){
         }
     }
 
+    //official winnings calculation
+    for (let i = 0; i < bunnyTurnout; i++){
+        //individual bunny earnings
+        let earnings = 0;
+        //3 trials for each bunny
+        for (let t = 0; t < 3; t++){
+            
+        }
 
-    return 
+        bunnyList.push(earnings);
+    }
+
+    return bunnyList;
 
 
     /*
