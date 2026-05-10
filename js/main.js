@@ -6,7 +6,7 @@ var officialBunnyTurnout = 0;
 var playerMoney = 1000;
 var bunnyMoney = 100;
 //Max bunnies per zone/machine
-var maxBunnies = 9;
+var maxBunnies = 5;
 //Max amount of tries bunnies will do
 var bunnyTries = 3;
 //Chance the owner has to even gamble in the first place
@@ -185,41 +185,42 @@ function machineCalc(mach){
     }
 }
 
+// ---------- Implementation ----------
+//Initial phase
 
+//Cheat opening
+const cheatOpenBtn = document.getElementById("cheat_open_btn");
+cheatOpenBtn.addEventListener("click", () => {
+    //FIXME: OPENS POPUP OF CHEAT MENU
+});
 
+//Cheat submission
+const cheatSubmitBtn = document.getElementById("cheat_submit_btn");
+cheatSubmitBtn.addEventListener("click", () => {
+    playerMoney = parseInt(document.getElementById("cheat_playerMoney").value, 10);
+    bunnyMoney = parseInt(document.getElementById("cheat_bunnyMoney").value, 10);
+    maxBunnies = parseInt(document.getElementById("cheat_maxBunnies").value, 10);
+    bunnyTries = parseInt(document.getElementById("cheat_maxTries").value, 10);
+    whiteRabbitChance = parseInt(document.getElementById("cheat_whiteRabbitChance").value, 10);
+    maxAmountGamble = parseInt(document.getElementById("cheat_playerTries").value, 10);
+    percentageGain = parseInt(document.getElementById("cheat_gainPercent").value, 10);
+    //FIXME: CLOSES POPUP OF CHEAT MENU
+});
 
-/* 
-ANIMATION:
-So when the day begins, the bunnies that will come and the amount 
-that they will earn is already established
+//Play button (initilization)
+const playBtn = document.getElementById("play_btn");
+playBtn.addEventListener("click", () => {
+    //FIXME: BEGINS PHASE 1 (BEFORE START DAY)
+    
+});
 
-the animation at that point on the screen is basically a random
-animation that will pop up, and over the span of 30 seconds, the 
-profits calculated and the negative stuff 
-
-
-To do:
-- make the slot calculation function
-- bunnies profits -> bunnies.setGain(slot(2))...
-    - bunny tries slot 2
-
-Pitch:
-Slot machine tycoon
-but tycoon games are too boring, aren't you just staring at
-the screen all day...
-that's what our owners thought, but little did they know
-the spirit of the rabbit who's people you scammed is seeking its
-revenge...
-spirit of the white rbbit at the end of the day makes 
-you play the very slot machines you created
-
-the basic goal is to survive as long as possible
-
-
-*/
-
-
-
+cheat_playerMoney
+cheat_bunnyMoney
+cheat_maxBunnies
+cheat_maxTries
+cheat_whiteRabbitChance
+cheat_playerTries
+cheat_gainPercent
 
 
 
