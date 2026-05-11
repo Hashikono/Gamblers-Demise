@@ -4,3 +4,6 @@ A casino tycoon game where you rig slot machines to make more money, but harsher
 # How to play
 1. Download the zip file of the game, extract it and open the HTML file in the latest version of chrome...
 2. https://hashikono.github.io/Gamblers-Demise/
+
+# Clipboard
+https://docs.google.com/document/d/1TKSPVUOeBgNmIE5zTDyPddDsD-RBgD7rU6JSTeBejQ8/edit?usp=sharing
